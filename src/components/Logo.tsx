@@ -10,7 +10,7 @@ export default function Logo({ name, light }: { name: string; light?: boolean })
     <img
       src={`${import.meta.env.BASE_URL}assets/logo.png`}
       alt={name}
-      className="h-18 w-auto sm:h-20"
+      className="h-24 w-auto sm:h-28"
       onError={() => setFailed(true)}
     />
   );
