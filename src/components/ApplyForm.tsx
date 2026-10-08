@@ -6,6 +6,16 @@ import type { Course, Format, Group } from "../types";
 interface Props { courses: Course[]; groups: Group[]; formats: Format[]; presetCourse?: string; presetGroup?: string }
 type Status = "idle" | "sending" | "success" | "error";
 
+// Telefon: foydalanuvchi faqat 9 ta raqam kiritadi (+998 oldindan yozilgan).
+// Ko'rinishi: "94 703 08 06"; serverga: "+998947030806".
+const normPhone = (raw: string) => {
+  let d = raw.replace(/\D/g, "");
+  if (d.length >= 12 && d.startsWith("998")) d = d.slice(3); // to'liq raqam qo'yib yuborilsa
+  return d.slice(0, 9);
+};
+const fmtPhone = (d: string) =>
+  [d.slice(0, 2), d.slice(2, 5), d.slice(5, 7), d.slice(7, 9)].filter(Boolean).join(" ");
+
 const field = "w-full rounded-lg border border-slate-300 bg-white px-3 py-2.5 focus:border-brand-600";
 
 export default function ApplyForm({ courses, groups, formats, presetCourse = "", presetGroup = "" }: Props) {
@@ -25,7 +35,7 @@ export default function ApplyForm({ courses, groups, formats, presetCourse = "",
   function validate() {
     const e: Record<string, string> = {};
     if (fullName.trim().length < 3) e.fullName = "Ism va familiyangizni kiriting";
-    if (phone.replace(/\D/g, "").length < 9) e.phone = "Telefon raqamni to'liq kiriting";
+    if (phone.length !== 9) e.phone = "Telefon raqamni to'liq kiriting (9 ta raqam)";
     if (!courseId) e.courseId = "Kursni tanlang";
     return e;
   }
@@ -39,7 +49,7 @@ export default function ApplyForm({ courses, groups, formats, presetCourse = "",
     setStatus("sending");
     try {
       await submitApplication({
-        fullName: fullName.trim(), phone, courseId, groupId, formatId, age, comment,
+        fullName: fullName.trim(), phone: `+998${phone}`, courseId, groupId, formatId, age, comment,
         source: q.get("source") ?? "direct",
         utmSource: q.get("utm_source") ?? "", utmMedium: q.get("utm_medium") ?? "", utmCampaign: q.get("utm_campaign") ?? "",
       });
@@ -69,7 +79,18 @@ export default function ApplyForm({ courses, groups, formats, presetCourse = "",
             <input className={field} value={fullName} onChange={(e) => setFullName(e.target.value)} autoComplete="name" />
           </Field>
           <Field label="Telefon raqam" error={errors.phone}>
-            <input className={field} type="tel" inputMode="tel" placeholder="+998 __ ___ __ __" value={phone} onChange={(e) => setPhone(e.target.value)} autoComplete="tel" />
+            <div className="flex rounded-lg border border-slate-300 bg-white focus-within:border-brand-600 focus-within:ring-2 focus-within:ring-brand-600/30">
+              <span className="select-none border-r border-slate-200 px-3 py-2.5 text-slate-500">+998</span>
+              <input
+                className="w-full rounded-r-lg bg-transparent px-3 py-2.5 outline-none"
+                type="tel"
+                inputMode="numeric"
+                autoComplete="tel-national"
+                placeholder="94 703 08 06"
+                value={fmtPhone(phone)}
+                onChange={(e) => setPhone(normPhone(e.target.value))}
+              />
+            </div>
           </Field>
           <Field label="Kurs" error={errors.courseId}>
             <select className={field} value={courseId} onChange={(e) => { setCourseId(e.target.value); setGroupId(""); }}>
