@@ -12,7 +12,7 @@ if (!API_URL) {
 
 async function request<T>(
   action: string,
-  payload?: Record<string, unknown>
+  payload?: object
 ): Promise<T> {
   const response = await fetch(API_URL, {
     method: payload ? "POST" : "GET",
