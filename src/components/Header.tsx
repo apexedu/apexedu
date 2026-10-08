@@ -14,7 +14,7 @@ export default function Header({ name }: { name: string }) {
   const [open, setOpen] = useState(false);
   return (
     <header className="sticky top-0 z-40 border-b border-slate-200 bg-white/95 backdrop-blur">
-      <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-6">
+      <div className="mx-auto flex h-20 max-w-6xl items-center justify-between px-4 sm:px-6">
         <a href="#top" aria-label={name}><Logo name={name} /></a>
         <nav className="hidden items-center gap-7 text-sm md:flex" aria-label="Asosiy menyu">
           {links.map((l) => (
