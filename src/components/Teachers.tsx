@@ -4,12 +4,21 @@ import type { Teacher } from "../types";
 
 const initials = (n: string) => n.split(" ").map((p) => p[0]).slice(0, 2).join("");
 
-// Katakda faqat fayl nomi yozilsa (ali.jpg) — public/assets/teachers/ papkasidan oladi.
-// To'liq havola (https://...) yozilsa — o'zgarishsiz ishlatadi.
-const photoSrc = (url: string) =>
-  /^(https?:|data:)/.test(url)
+// photo_url katagida quyidagilardan istalgani bo'lishi mumkin:
+//  - Google Drive havolasi yoki faqat fayl ID'si (rasm "Anyone with the link" bo'lishi kerak)
+//  - fayl nomi (ali.jpg) — public/assets/teachers/ papkasidan olinadi
+//  - boshqa to'liq havola (https://...)
+const driveId = (u: string) =>
+  u.match(/drive\.google\.com\/(?:file\/d\/|open\?id=|uc\?(?:[^#]*&)?id=|thumbnail\?(?:[^#]*&)?id=)([\w-]{20,})/)?.[1] ??
+  (/^[\w-]{25,}$/.test(u) ? u : null);
+
+const photoSrc = (url: string) => {
+  const id = driveId(url);
+  if (id) return `https://lh3.googleusercontent.com/d/${id}=w800`;
+  return /^(https?:|data:)/.test(url)
     ? url
     : `${import.meta.env.BASE_URL}assets/teachers/${url.replace(/^\.?\/?(assets\/teachers\/)?/, "")}`;
+};
 
 function Avatar({ t }: { t: Teacher }) {
   const [failed, setFailed] = useState(false);
