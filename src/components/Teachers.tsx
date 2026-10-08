@@ -4,6 +4,34 @@ import type { Teacher } from "../types";
 
 const initials = (n: string) => n.split(" ").map((p) => p[0]).slice(0, 2).join("");
 
+// Katakda faqat fayl nomi yozilsa (ali.jpg) — public/assets/teachers/ papkasidan oladi.
+// To'liq havola (https://...) yozilsa — o'zgarishsiz ishlatadi.
+const photoSrc = (url: string) =>
+  /^(https?:|data:)/.test(url)
+    ? url
+    : `${import.meta.env.BASE_URL}assets/teachers/${url.replace(/^\.?\/?(assets\/teachers\/)?/, "")}`;
+
+function Avatar({ t }: { t: Teacher }) {
+  const [failed, setFailed] = useState(false);
+  if (t.photo && !failed) {
+    return (
+      <img
+        src={photoSrc(t.photo)}
+        alt={t.fullName}
+        loading="lazy"
+        referrerPolicy="no-referrer"
+        onError={() => setFailed(true)}
+        className="mx-auto h-28 w-28 rounded-full object-cover"
+      />
+    );
+  }
+  return (
+    <div className="mx-auto flex h-28 w-28 items-center justify-center rounded-full bg-brand-50 text-3xl font-semibold text-brand-600" aria-hidden="true">
+      {initials(t.fullName)}
+    </div>
+  );
+}
+
 export default function Teachers({ teachers }: { teachers: Teacher[] }) {
   const n = teachers.length;
   const [active, setActive] = useState(0);
@@ -67,11 +95,7 @@ export default function Teachers({ teachers }: { teachers: Teacher[] }) {
                 pointerEvents: abs > 1 ? "none" : "auto",
               }}
             >
-              {t.photo ? (
-                <img src={t.photo} alt={t.fullName} loading="lazy" className="mx-auto h-28 w-28 rounded-full object-cover" />
-              ) : (
-                <div className="mx-auto flex h-28 w-28 items-center justify-center rounded-full bg-brand-50 text-3xl font-semibold text-brand-600" aria-hidden="true">{initials(t.fullName)}</div>
-              )}
+              <Avatar t={t} />
               <h3 className="mt-4 text-lg font-semibold">{t.fullName}</h3>
               <p className="text-sm font-medium text-brand-600">{t.position}</p>
               <p className="mt-2 text-sm text-slate-600">{t.bio}</p>
