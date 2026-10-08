@@ -5,9 +5,7 @@ import Hero from "./components/Hero";
 import About from "./components/About";
 import Courses from "./components/Courses";
 import Teachers from "./components/Teachers";
-import Formats from "./components/Formats";
-import Advantages from "./components/Advantages";
-import Testimonials from "./components/Testimonials";
+import Reviews from "./components/Reviews";
 import Faq from "./components/Faq";
 import Contact from "./components/Contact";
 import ApplyForm from "./components/ApplyForm";
@@ -31,19 +29,16 @@ export default function App() {
     setPreset((p) => ({ courseId, groupId, n: p.n + 1 }));
     document.getElementById("apply")?.scrollIntoView({ behavior: "smooth" });
   };
-  const firstCourse = data.courses[0];
 
   return (
     <>
       <Header name={data.settings.academyName} />
       <main>
-        <Hero settings={data.settings} course={firstCourse} groups={data.groups.filter((g) => g.courseId === firstCourse?.id)} />
-        <About name={data.settings.academyName} />
+        <Hero settings={data.settings} courses={data.courses} groups={data.groups} />
+        <About name={data.settings.academyName} formats={data.formats} advantages={data.advantages} testimonials={data.testimonials} />
         <Courses courses={data.courses} groups={data.groups} onApply={apply} />
         <Teachers teachers={data.teachers} />
-        <Formats formats={data.formats} />
-        <Advantages items={data.advantages} />
-        <Testimonials items={data.testimonials} />
+        <Reviews reviews={data.reviews} />
         <Faq items={data.faqs} />
         <ApplyForm key={preset.n} courses={data.courses} groups={data.groups} formats={data.formats} presetCourse={preset.courseId} presetGroup={preset.groupId} />
         <Contact settings={data.settings} />
