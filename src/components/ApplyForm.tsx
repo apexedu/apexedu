@@ -1,6 +1,6 @@
 import { FormEvent, useMemo, useState } from "react";
 import Section from "./Section";
-import { submitApplication } from "../services/api";
+import { ApiError, submitApplication } from "../services/api";
 import type { Course, Format, Group } from "../types";
 
 interface Props { courses: Course[]; groups: Group[]; formats: Format[]; presetCourse?: string; presetGroup?: string }
@@ -18,6 +18,7 @@ export default function ApplyForm({ courses, groups, formats, presetCourse = "",
   const [comment, setComment] = useState("");
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [status, setStatus] = useState<Status>("idle");
+  const [errorMsg, setErrorMsg] = useState("");
 
   const courseGroups = useMemo(() => groups.filter((g) => g.courseId === courseId), [groups, courseId]);
 
@@ -43,7 +44,15 @@ export default function ApplyForm({ courses, groups, formats, presetCourse = "",
         utmSource: q.get("utm_source") ?? "", utmMedium: q.get("utm_medium") ?? "", utmCampaign: q.get("utm_campaign") ?? "",
       });
       setStatus("success");
-    } catch {
+    } catch (err) {
+      const code = err instanceof ApiError ? err.code : "network";
+      setErrorMsg(
+        code === "rate_limited"
+          ? "Bu raqamdan ariza yaqinda yuborilgan. Bir daqiqadan so'ng qayta urinib ko'ring."
+          : code.startsWith("invalid_")
+          ? "Ma'lumotlarni tekshirib, qayta yuboring."
+          : "Arizani yuborib bo'lmadi. Internetni tekshirib, qayta urinib ko'ring."
+      );
       setStatus("error");
     }
   }
@@ -90,7 +99,7 @@ export default function ApplyForm({ courses, groups, formats, presetCourse = "",
           </div>
           <div className="sm:col-span-2">
             {status === "error" && (
-              <p role="alert" className="mb-3 text-sm text-red-700">Arizani yuborib bo'lmadi. Internetni tekshirib, qayta urinib ko'ring.</p>
+              <p role="alert" className="mb-3 text-sm text-red-700">{errorMsg}</p>
             )}
             <button type="submit" disabled={status === "sending"} className="w-full rounded-lg bg-brand-600 px-6 py-3 font-semibold text-white hover:bg-brand-700 disabled:opacity-60 sm:w-auto">
               {status === "sending" ? "Yuborilmoqda..." : status === "error" ? "Qayta yuborish" : "Ariza yuborish"}
