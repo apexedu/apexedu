@@ -5,6 +5,7 @@ const links = [
   { href: "#about", label: "Biz haqimizda" },
   { href: "#courses", label: "Kurslar" },
   { href: "#teachers", label: "O'qituvchilar" },
+  { href: "#reviews", label: "Fikrlar" },
   { href: "#faq", label: "Savollar" },
   { href: "#contact", label: "Aloqa" },
 ];
