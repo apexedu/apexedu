@@ -1,3 +1,4 @@
+```ts
 import type {
   ApplicationPayload,
   ReviewPayload,
@@ -14,7 +15,11 @@ async function request<T>(
   action: string,
   payload?: object
 ): Promise<T> {
-  const response = await fetch(API_URL, {
+  const url = payload
+    ? API_URL
+    : `${API_URL}?action=${encodeURIComponent(action)}`;
+
+  const response = await fetch(url, {
     method: payload ? "POST" : "GET",
     headers: payload
       ? {
@@ -57,3 +62,4 @@ export async function submitReview(
 ): Promise<void> {
   await request("submitReview", payload);
 }
+```
