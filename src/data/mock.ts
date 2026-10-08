@@ -55,4 +55,9 @@ export const mockSiteData: SiteData = {
     { id: "q3", question: "Online va offline farqi nima?", answer: "Dastur bir xil. Farqi faqat darsda qatnashish usulida." },
     { id: "q4", question: "Dars narxi qancha?", answer: "Narx guruh va formatga bog'liq. Aniq ma'lumot uchun biz bilan bog'laning." },
   ],
+  reviews: [
+    { id: "v1", name: "Talaba ismi", rating: 5, text: "Darslar qiziqarli, o'qituvchilar har bir savolga javob beradi. (Vaqtincha sharh)", date: "2026-09-12" },
+    { id: "v2", name: "Talaba ismi", rating: 5, text: "Online formatda ham juda qulay o'qidim. (Vaqtincha sharh)", date: "2026-09-20" },
+    { id: "v3", name: "Ota-ona ismi", rating: 4, text: "Farzandim uchun guruhni to'g'ri tanlab berishdi. (Vaqtincha sharh)", date: "2026-09-28" },
+  ],
 };
