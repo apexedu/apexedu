@@ -1,20 +1,59 @@
-import { mockSiteData } from "../data/mock";
-import type { ApplicationPayload, ReviewPayload, SiteData } from "../types";
+import type {
+  ApplicationPayload,
+  ReviewPayload,
+  SiteData,
+} from "../types";
 
-// Servis qatlami. 1-bosqichda mock; 2-bosqichda faqat shu fayl Apps Script URL'ga ulanadi.
-const delay = (ms: number) => new Promise((r) => setTimeout(r, ms));
+const API_URL = import.meta.env.VITE_API_URL;
+
+if (!API_URL) {
+  console.warn("VITE_API_URL topilmadi");
+}
+
+async function request<T>(
+  action: string,
+  payload?: Record<string, unknown>
+): Promise<T> {
+  const response = await fetch(API_URL, {
+    method: payload ? "POST" : "GET",
+    headers: payload
+      ? {
+          "Content-Type": "text/plain;charset=utf-8",
+        }
+      : undefined,
+    body: payload
+      ? JSON.stringify({
+          action,
+          ...payload,
+        })
+      : undefined,
+  });
+
+  if (!response.ok) {
+    throw new Error(`HTTP error: ${response.status}`);
+  }
+
+  const result = await response.json();
+
+  if (!result.ok) {
+    throw new Error(result.error || "Server xatosi");
+  }
+
+  return result.data;
+}
 
 export async function getSiteData(): Promise<SiteData> {
-  await delay(300);
-  return mockSiteData;
+  return request<SiteData>("public");
 }
 
-export async function submitApplication(payload: ApplicationPayload): Promise<void> {
-  await delay(800);
-  console.info("[mock] ariza yuborildi:", payload);
+export async function submitApplication(
+  payload: ApplicationPayload
+): Promise<void> {
+  await request("submitApplication", payload);
 }
 
-export async function submitReview(payload: ReviewPayload): Promise<void> {
-  await delay(700);
-  console.info("[mock] fikr yuborildi:", payload);
+export async function submitReview(
+  payload: ReviewPayload
+): Promise<void> {
+  await request("submitReview", payload);
 }
