@@ -4,6 +4,8 @@ export interface Teacher { id: string; fullName: string; position: string; bio: 
 export interface Format { id: string; name: string; description: string }
 export interface Advantage { id: string; title: string; text: string }
 export interface Testimonial { id: string; name: string; result: string; text: string }
+export interface Review { id: string; name: string; rating: number; text: string; date: string }
+export interface ReviewPayload { name: string; rating: number; text: string }
 export interface Faq { id: string; question: string; answer: string }
 export interface Settings {
   academyName: string;
@@ -25,6 +27,7 @@ export interface SiteData {
   advantages: Advantage[];
   testimonials: Testimonial[];
   faqs: Faq[];
+  reviews: Review[];
 }
 export interface ApplicationPayload {
   fullName: string;
