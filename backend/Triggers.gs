@@ -9,7 +9,7 @@ function warmCache() {
 
 // Oddiy trigger: Sheets'da qo'lda biror katak o'zgartirilsa, kesh darhol yangilanadi
 function onEdit() {
-  try { warmCache(); } catch (e) { clearPublicCache_(); }
+  try { clearAdminListCaches_(); clearAdminsCache_(); warmCache(); } catch (e) { clearPublicCache_(); }
 }
 
 function installTriggers() {
