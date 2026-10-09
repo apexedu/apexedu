@@ -45,3 +45,10 @@ export async function call<T = any>(action: string, body: object = {}): Promise<
   }
   return json.data as T;
 }
+
+// Yozuvlardan keyin sayt keshini fonda (kechiktirib, bitta so'rov bilan) yangilaydi — foydalanuvchi kutmaydi
+let warmTimer: number | undefined;
+export function scheduleWarm() {
+  window.clearTimeout(warmTimer);
+  warmTimer = window.setTimeout(() => { call("adminWarm").catch(() => undefined); }, 2500);
+}
