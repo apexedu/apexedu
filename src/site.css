@@ -1,11 +1,13 @@
 /* ===== Faqat OMMAVIY sayt uchun (admin panel bu faylni ulamaydi) ===== */
 
-html { overflow-x: clip; scroll-padding-top: 72px; }
+html { overflow-x: clip; scroll-padding-top: 72px; -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+body.site { overflow-x: clip; -webkit-tap-highlight-color: transparent; }
+img, svg { max-width: 100%; }
 
 /* Bo'limga o'tganda to'lqin va yuqoridagi bo'sh joy ko'rinmasin: sarlavha sarlavha ostida (≈24px) to'xtaydi.
    Qiymatlar Section'dagi pt-* (padding-top) dan 1.5rem kam. */
-.sec-w { scroll-margin-top: -5.5rem; }
-.sec-n { scroll-margin-top: -3.5rem; }
+.sec-w { scroll-margin-top: -4.5rem; }
+.sec-n { scroll-margin-top: -2.5rem; }
 @media (min-width: 640px) {
   .sec-w { scroll-margin-top: -7.5rem; }
   .sec-n { scroll-margin-top: -5.5rem; }
@@ -21,6 +23,12 @@ body.site { background: #fff; }
 }
 [data-reveal="left"] { transform: translate3d(-36px, 0, 0); }
 [data-reveal="right"] { transform: translate3d(36px, 0, 0); }
+/* Telefon: yon tomondan kirish ekrandan chiqib ketmasin — yengil pastdan chiqish */
+@media (max-width: 767px) {
+  [data-reveal] { transform: translate3d(0, 18px, 0); transition-duration: 0.6s; }
+  [data-reveal="zoom"] { transform: scale(0.96); }
+  [data-reveal].is-in { transform: none; }
+}
 [data-reveal="zoom"] { transform: scale(0.92); }
 [data-reveal].is-in { opacity: 1; transform: none; }
 
@@ -135,3 +143,22 @@ body.site { background: #fff; }
 }
 .hover-lift { transition: transform 0.35s cubic-bezier(0.2, 0.7, 0.2, 1), box-shadow 0.35s ease, border-color 0.35s ease; }
 .hover-lift:hover { transform: translateY(-6px); }
+
+/* ---------- Karusel (natijalar) ---------- */
+.snap-row { display: flex; gap: 1rem; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; overscroll-behavior-x: contain; -webkit-overflow-scrolling: touch; }
+.snap-row::-webkit-scrollbar { display: none; }
+.snap-row > * { scroll-snap-align: start; flex: 0 0 100%; min-width: 0; }
+@media (min-width: 768px) {
+  .snap-row { gap: 1.5rem; }
+  .snap-row.two > * { flex-basis: calc(50% - 0.75rem); }
+}
+
+/* ---------- Telefon (<640px) uchun umumiy ixchamlashtirish ---------- */
+@media (max-width: 639px) {
+  /* Mobilda og'ir fon animatsiyalari ekranni to'sib qo'ymasin */
+  .grid-lines { background-size: 40px 40px; }
+  .edu-item { opacity: 0.8; }
+  .hover-lift:hover { transform: none; }
+  /* Tugmalar bosish uchun yetarlicha katta (>=44px) */
+  .tap { min-height: 44px; }
+}
