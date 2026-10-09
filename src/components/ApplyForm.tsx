@@ -9,7 +9,7 @@ interface Props { courses: Course[]; groups: Group[]; formats: Format[]; presetC
 type Status = "idle" | "sending" | "success" | "error";
 
 // Telefon: foydalanuvchi faqat 9 ta raqam kiritadi (+998 oldindan yozilgan).
-// Ko'rinishi: "94 703 08 06"; serverga: "+998947030806".
+// Ko'rinishi: "50 777 37 38"; serverga: "+998507773738".
 const normPhone = (raw: string) => {
   let d = raw.replace(/\D/g, "");
   if (d.length >= 12 && d.startsWith("998")) d = d.slice(3); // to'liq raqam qo'yib yuborilsa
@@ -18,7 +18,7 @@ const normPhone = (raw: string) => {
 const fmtPhone = (d: string) =>
   [d.slice(0, 2), d.slice(2, 5), d.slice(5, 7), d.slice(7, 9)].filter(Boolean).join(" ");
 
-const field = "w-full rounded-xl border border-slate-300 bg-white px-4 py-3 outline-none transition focus:border-brand-600 focus:ring-4 focus:ring-brand-600/15 disabled:bg-slate-50 disabled:text-slate-400";
+const field = "w-full min-w-0 rounded-xl border border-slate-300 bg-white px-4 py-3 text-base outline-none transition focus:border-brand-600 focus:ring-4 focus:ring-brand-600/15 disabled:bg-slate-50 disabled:text-slate-400";
 
 export default function ApplyForm({ courses, groups, formats, presetCourse = "", presetGroup = "", callPhone, telegram, name }: Props) {
   const [fullName, setFullName] = useState("");
@@ -71,22 +71,22 @@ export default function ApplyForm({ courses, groups, formats, presetCourse = "",
 
   return (
     <Section id="apply" title="Kursga yozilish" eyebrow="Ariza" tone="dark" prev="light" wave="tilt" backdrop={7} subtitle={`Ma'lumotlaringizni qoldiring — ${name} jamoasi tez orada siz bilan bog'lanadi.`}>
-      <div className="grid gap-10 lg:grid-cols-[1fr_1.25fr] lg:items-start">
+      <div className="grid gap-8 sm:gap-10 lg:grid-cols-[1fr_1.25fr] lg:items-start">
         {/* Chap: nega hoziroq yozilish kerak + tezkor aloqa */}
-        <div data-reveal="left" className="space-y-7">
-          <ul className="space-y-4 text-lg">
+        <div data-reveal="left" className="space-y-6 sm:space-y-7">
+          <ul className="space-y-3 text-base sm:space-y-4 sm:text-lg">
             {["Darajangizni bepul aniqlaymiz", "Sizga mos guruhni birga tanlaymiz", "Offline yoki online — o'zingizga qulay formatda"].map((t, i) => (
-              <li key={t} className="flex items-center gap-4" style={{ transitionDelay: `${i * 100}ms` }}>
-                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-saffron text-brand-900"><Icon name="check" className="h-5 w-5" /></span>
+              <li key={t} className="flex items-center gap-3 sm:gap-4" style={{ transitionDelay: `${i * 100}ms` }}>
+                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-saffron text-brand-900 sm:h-9 sm:w-9"><Icon name="check" className="h-4 w-4 sm:h-5 sm:w-5" /></span>
                 {t}
               </li>
             ))}
           </ul>
-          <div className="rounded-3xl border border-white/15 bg-white/[0.07] p-6 backdrop-blur-sm">
+          <div className="rounded-3xl border border-white/15 bg-white/[0.07] p-5 backdrop-blur-sm sm:p-6">
             <p className="text-sm font-semibold uppercase tracking-wider text-white/60">Kutishni xohlamaysizmi?</p>
             <div className="mt-4 grid gap-3">
               {callPhone && (
-                <a href={telHref(callPhone)} className="btn-shine glow-saffron flex items-center justify-center gap-3 rounded-2xl bg-saffron px-5 py-4 text-lg font-extrabold text-brand-900 transition hover:-translate-y-0.5">
+                <a href={telHref(callPhone)} className="btn-shine glow-saffron flex items-center justify-center gap-3 rounded-2xl bg-saffron px-5 py-3.5 text-base font-extrabold text-brand-900 transition hover:-translate-y-0.5 sm:py-4 sm:text-lg">
                   <Icon name="phone" className="ringing h-5 w-5" /> {callPhone}
                 </a>
               )}
@@ -100,28 +100,28 @@ export default function ApplyForm({ courses, groups, formats, presetCourse = "",
         </div>
 
         {status === "success" ? (
-          <div role="status" data-reveal="right" className="pop-in rounded-3xl bg-white p-8 text-center text-brand-900 shadow-2xl sm:p-12">
-            <svg viewBox="0 0 52 52" className="mx-auto h-24 w-24" aria-hidden="true">
+          <div role="status" data-reveal="right" className="pop-in rounded-3xl bg-white p-6 text-center text-brand-900 shadow-2xl sm:p-12">
+            <svg viewBox="0 0 52 52" className="mx-auto h-20 w-20 sm:h-24 sm:w-24" aria-hidden="true">
               <circle className="check-circle" cx="26" cy="26" r="24" fill="none" stroke="#4f8a3c" strokeWidth="3" />
               <path className="check-mark" d="M15 27l8 8 14-16" fill="none" stroke="#4f8a3c" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
-            <p className="mt-5 text-2xl font-extrabold">Arizangiz qabul qilindi!</p>
+            <p className="mt-4 text-xl font-extrabold sm:mt-5 sm:text-2xl">Arizangiz qabul qilindi!</p>
             <p className="mt-2 text-slate-600">Arizangiz muvaffaqiyatli yuborildi. {name} jamoasi tez orada siz bilan bog'lanadi.</p>
           </div>
         ) : (
-          <form onSubmit={onSubmit} noValidate data-reveal="right" className="grid gap-5 rounded-3xl bg-white p-6 text-ink shadow-2xl sm:grid-cols-2 sm:p-8">
+          <form onSubmit={onSubmit} noValidate data-reveal="right" className="grid gap-4 rounded-3xl bg-white p-5 text-ink shadow-2xl sm:grid-cols-2 sm:gap-5 sm:p-8">
             <Field label="Ism va familiya" error={errors.fullName}>
               <input className={field} value={fullName} onChange={(e) => setFullName(e.target.value)} autoComplete="name" />
             </Field>
             <Field label="Telefon raqam" error={errors.phone}>
               <div className="flex rounded-xl border border-slate-300 bg-white transition focus-within:border-brand-600 focus-within:ring-4 focus-within:ring-brand-600/15">
-                <span className="select-none border-r border-slate-200 px-3 py-3 text-slate-500">+998</span>
+                <span className="select-none border-r border-slate-200 px-3 py-3 text-base text-slate-500">+998</span>
                 <input
-                  className="w-full rounded-r-xl bg-transparent px-3 py-3 outline-none"
+                  className="w-full min-w-0 rounded-r-xl bg-transparent px-3 py-3 text-base outline-none"
                   type="tel"
                   inputMode="numeric"
                   autoComplete="tel-national"
-                  placeholder="94 703 08 06"
+                  placeholder="50 777 37 38"
                   value={fmtPhone(phone)}
                   onChange={(e) => setPhone(normPhone(e.target.value))}
                 />
@@ -157,7 +157,7 @@ export default function ApplyForm({ courses, groups, formats, presetCourse = "",
               {status === "error" && (
                 <p role="alert" className="mb-3 rounded-xl bg-red-50 px-4 py-3 text-sm text-red-700">{errorMsg}</p>
               )}
-              <button type="submit" disabled={status === "sending"} className="btn-shine glow-saffron group flex w-full items-center justify-center gap-2.5 rounded-2xl bg-saffron px-6 py-4 text-lg font-extrabold text-brand-900 transition hover:brightness-105 disabled:opacity-70">
+              <button type="submit" disabled={status === "sending"} className="btn-shine glow-saffron group flex w-full items-center justify-center gap-2.5 rounded-2xl bg-saffron px-6 py-3.5 text-base font-extrabold text-brand-900 transition hover:brightness-105 disabled:opacity-70 sm:py-4 sm:text-lg">
                 {status === "sending" ? (
                   <><span className="h-5 w-5 animate-spin rounded-full border-2 border-brand-900/30 border-t-brand-900" /> Yuborilmoqda...</>
                 ) : (
