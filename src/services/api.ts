@@ -57,13 +57,25 @@ async function request<T>(action: string, body: object | undefined, timeoutMs: n
   }
 }
 
+// Backend eski bo'lsa ham (yangi maydonlar kelmasa) sayt yiqilmasligi uchun standart qiymatlar qo'yiladi
+const SETTINGS_DEFAULTS = { instagram: "", facebook: "", youtube: "" };
+
+function normalize(d: SiteData): SiteData {
+  return {
+    ...d,
+    settings: { ...SETTINGS_DEFAULTS, ...d.settings },
+    heroCards: d.heroCards ?? d.courses.map((c) => ({ id: c.id, title: `${c.name}: daraja yo'li`, courseId: c.id })),
+    reviews: d.reviews ?? [],
+  };
+}
+
 export async function getSiteData(): Promise<SiteData> {
   if (useMock) {
     console.warn("[mock] VITE_API_URL yo'q — vaqtincha ma'lumotlar ishlatilmoqda");
     await delay(300);
     return mockSiteData;
   }
-  return request<SiteData>("public", undefined, 20000, 2);
+  return normalize(await request<SiteData>("public", undefined, 20000, 2));
 }
 
 // requestId — qayta yuborilganda server ikkinchi yozuv yaratmasligi uchun
