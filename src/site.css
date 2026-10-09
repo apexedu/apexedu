@@ -1,0 +1,128 @@
+/* ===== Faqat OMMAVIY sayt uchun (admin panel bu faylni ulamaydi) ===== */
+
+html { overflow-x: clip; }
+body.site { background: #fff; }
+
+/* ---------- Scroll reveal ---------- */
+[data-reveal] {
+  opacity: 0;
+  transform: translate3d(0, 28px, 0);
+  transition: opacity 0.8s cubic-bezier(0.2, 0.7, 0.2, 1), transform 0.8s cubic-bezier(0.2, 0.7, 0.2, 1);
+  transition-delay: var(--d, 0ms);
+}
+[data-reveal="left"] { transform: translate3d(-36px, 0, 0); }
+[data-reveal="right"] { transform: translate3d(36px, 0, 0); }
+[data-reveal="zoom"] { transform: scale(0.92); }
+[data-reveal].is-in { opacity: 1; transform: none; }
+
+/* Sarlavha tagidagi chiziq */
+.title-bar { transform-origin: left; transform: scaleX(0); transition: transform 0.9s cubic-bezier(0.2, 0.7, 0.2, 1) 0.25s; }
+.is-in .title-bar, .is-in.title-bar { transform: none; }
+
+/* Zinapoya ustunlari */
+.step-bar { transform-origin: bottom; transform: scaleY(0); transition: transform 0.9s cubic-bezier(0.2, 0.8, 0.2, 1); transition-delay: var(--d, 0ms); }
+.is-in .step-bar { transform: none; }
+
+/* ---------- Fon naqshlari ---------- */
+.grid-lines {
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.06) 1px, transparent 1px);
+  background-size: 56px 56px;
+  -webkit-mask-image: radial-gradient(ellipse at 50% 40%, #000 15%, transparent 72%);
+  mask-image: radial-gradient(ellipse at 50% 40%, #000 15%, transparent 72%);
+}
+.dots-pattern {
+  background-image: radial-gradient(rgba(11, 93, 122, 0.16) 1.3px, transparent 1.3px);
+  background-size: 24px 24px;
+}
+.dots-pattern-dark {
+  background-image: radial-gradient(rgba(255, 255, 255, 0.1) 1.3px, transparent 1.3px);
+  background-size: 26px 26px;
+}
+
+/* Aurora dog'lari — filter blur'siz (mobilda yengil) */
+.aurora { position: absolute; border-radius: 9999px; will-change: transform; }
+.aurora-a { background: radial-gradient(circle at center, rgba(47, 164, 189, 0.55), transparent 65%); animation: aurora-a 18s ease-in-out infinite; }
+.aurora-b { background: radial-gradient(circle at center, rgba(240, 163, 10, 0.28), transparent 65%); animation: aurora-b 22s ease-in-out infinite; }
+.aurora-c { background: radial-gradient(circle at center, rgba(79, 138, 60, 0.35), transparent 65%); animation: aurora-a 26s ease-in-out infinite reverse; }
+
+/* ---------- Ta'limga oid suzuvchi belgilar ---------- */
+.edu-item { position: absolute; will-change: transform; user-select: none; }
+.edu-a { animation: float-a var(--dur, 20s) ease-in-out var(--del, 0s) infinite; }
+.edu-b { animation: float-b var(--dur, 24s) ease-in-out var(--del, 0s) infinite; }
+
+/* ---------- Tugma effektlari ---------- */
+.btn-shine { position: relative; overflow: hidden; isolation: isolate; }
+.btn-shine::after {
+  content: ""; position: absolute; inset: 0; z-index: -1;
+  background: linear-gradient(100deg, transparent 30%, rgba(255, 255, 255, 0.55) 50%, transparent 70%);
+  transform: translateX(-120%) skewX(-20deg);
+  animation: shine 3.8s ease-in-out 1.2s infinite;
+}
+.pulse-ring { position: absolute; inset: 0; border-radius: inherit; border: 2px solid currentColor; animation: ring 2.2s ease-out infinite; pointer-events: none; }
+.pulse-ring.d2 { animation-delay: 1.1s; }
+.ringing { transform-origin: 50% 50%; animation: ringing 3s ease-in-out infinite; }
+.glow-saffron { box-shadow: 0 10px 30px -8px rgba(240, 163, 10, 0.65); }
+
+/* Yuborish muvaffaqiyatli bo'lgandagi belgi */
+.check-circle { stroke-dasharray: 160; stroke-dashoffset: 160; animation: draw 0.7s ease-out 0.1s forwards; }
+.check-mark { stroke-dasharray: 40; stroke-dashoffset: 40; animation: draw 0.5s ease-out 0.6s forwards; }
+.pop-in { animation: pop 0.5s cubic-bezier(0.2, 1.4, 0.4, 1) both; }
+
+/* Hero slayd taymeri */
+.slide-progress { transform-origin: left; animation: grow-x 4s linear forwards; }
+
+/* Marquee */
+.marquee-track { display: flex; width: max-content; animation: marquee 38s linear infinite; }
+.marquee:hover .marquee-track { animation-play-state: paused; }
+
+/* Mobil menyu */
+.menu-in { animation: menu-in 0.28s ease-out both; }
+
+/* FAQ ochilishi */
+.acc { display: grid; grid-template-rows: 0fr; transition: grid-template-rows 0.35s ease; }
+.acc[data-open="true"] { grid-template-rows: 1fr; }
+.acc > div { overflow: hidden; }
+
+/* ---------- Keyframes ---------- */
+@keyframes float-a {
+  0%, 100% { transform: translate3d(0, 0, 0) rotate(var(--r, 0deg)); }
+  50% { transform: translate3d(16px, -30px, 0) rotate(calc(var(--r, 0deg) + 9deg)); }
+}
+@keyframes float-b {
+  0%, 100% { transform: translate3d(0, 0, 0) rotate(var(--r, 0deg)); }
+  50% { transform: translate3d(-20px, 26px, 0) rotate(calc(var(--r, 0deg) - 11deg)); }
+}
+@keyframes aurora-a {
+  0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+  50% { transform: translate3d(60px, 40px, 0) scale(1.15); }
+}
+@keyframes aurora-b {
+  0%, 100% { transform: translate3d(0, 0, 0) scale(1.1); }
+  50% { transform: translate3d(-70px, -30px, 0) scale(0.95); }
+}
+@keyframes marquee { to { transform: translateX(-50%); } }
+@keyframes ring { 0% { transform: scale(0.95); opacity: 0.6; } 100% { transform: scale(1.8); opacity: 0; } }
+@keyframes shine { 0% { transform: translateX(-120%) skewX(-20deg); } 55%, 100% { transform: translateX(220%) skewX(-20deg); } }
+@keyframes ringing {
+  0%, 55%, 100% { transform: rotate(0); }
+  5%, 15%, 25%, 35% { transform: rotate(-16deg); }
+  10%, 20%, 30%, 40% { transform: rotate(16deg); }
+}
+@keyframes draw { to { stroke-dashoffset: 0; } }
+@keyframes pop { 0% { transform: scale(0.5); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+@keyframes grow-x { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+@keyframes menu-in { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: none; } }
+@keyframes bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+.bob { animation: bob 4.5s ease-in-out infinite; }
+.bob-2 { animation: bob 5.5s ease-in-out 0.8s infinite; }
+@keyframes slide-up { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: none; } }
+.slide-up { animation: slide-up 0.35s ease-out both; }
+
+/* Telefon va sensorli ekranlarda hover'ga tayanmaymiz */
+@media (hover: none) {
+  .hover-lift:hover { transform: none; }
+}
+.hover-lift { transition: transform 0.35s cubic-bezier(0.2, 0.7, 0.2, 1), box-shadow 0.35s ease, border-color 0.35s ease; }
+.hover-lift:hover { transform: translateY(-6px); }
