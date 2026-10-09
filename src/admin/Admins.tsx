@@ -1,22 +1,26 @@
-import { useCallback, useEffect, useState } from "react";
+import { useState } from "react";
 import { call, Admin, Row, setToken } from "./adminApi";
+import { useCached } from "./cache";
 import { btnDanger, btnGhost, btnPrimary, btnSmall, cardCls, ErrorBox, errText, Field, fmtDate, inputCls, Loading, Modal, PageHeader, Toggle } from "./ui";
 
 export default function Admins({ me }: { me: Admin }) {
-  const [list, setList] = useState<Row[] | null>(null);
-  const [error, setError] = useState("");
+  const { data: list, error, reload, mutate } = useCached<Row[]>("admins", () => call<Row[]>("adminListAdmins"));
+  const [notice, setNotice] = useState("");
   const [creating, setCreating] = useState(false);
   const [resetFor, setResetFor] = useState<Row | null>(null);
   const [own, setOwn] = useState(false);
 
-  const load = useCallback(() => {
-    setError("");
-    call<Row[]>("adminListAdmins").then(setList).catch((e) => setError(errText(e)));
-  }, []);
-  useEffect(load, [load]);
-
-  async function act(fn: () => Promise<unknown>) {
-    try { await fn(); await load(); } catch (e) { setError(errText(e)); }
+  // Optimistik: o'zgarish darhol ko'rinadi, xatoda qaytariladi
+  function toggle(a: Row, v: boolean) {
+    setNotice("");
+    mutate((l) => (l ?? []).map((x) => (x.id === a.id ? { ...x, active: v } : x)));
+    call("adminUpdateAdmin", { id: a.id, active: v }).catch((e) => { setNotice(errText(e)); reload(); });
+  }
+  function remove(a: Row) {
+    if (!window.confirm(`${a.login} o'chirilsinmi?`)) return;
+    setNotice("");
+    mutate((l) => (l ?? []).filter((x) => x.id !== a.id));
+    call("adminDeleteAdmin", { id: a.id }).catch((e) => { setNotice(errText(e)); reload(); });
   }
 
   return (
@@ -26,7 +30,7 @@ export default function Admins({ me }: { me: Admin }) {
         hint="Admin panelga kira oladigan foydalanuvchilar."
         actions={<div className="flex gap-2"><button className={btnGhost} onClick={() => setOwn(true)}>Parolimni o'zgartirish</button><button className={btnPrimary} onClick={() => setCreating(true)}>+ Admin qo'shish</button></div>}
       />
-      {error && <div className="mb-4"><ErrorBox message={error} onRetry={load} /></div>}
+      {(notice || error) && <div className="mb-4"><ErrorBox message={notice || error} onRetry={reload} /></div>}
       {!list ? (!error && <Loading />) : (
         <div className="overflow-x-auto rounded-2xl border border-slate-200 bg-white">
           <table className="w-full min-w-[560px] text-left text-sm">
@@ -38,11 +42,11 @@ export default function Admins({ me }: { me: Admin }) {
                 <tr key={a.id}>
                   <td className="px-3 py-2 font-medium">{a.login}{a.id === me.id && <span className="ml-2 text-xs text-slate-500">(siz)</span>}</td>
                   <td className="px-3 py-2">{fmtDate(a.created_at)}</td>
-                  <td className="px-3 py-2"><Toggle checked={a.active} label="Faol" onChange={(v) => act(() => call("adminUpdateAdmin", { id: a.id, active: v }))} /></td>
+                  <td className="px-3 py-2"><Toggle checked={a.active} label="Faol" onChange={(v) => toggle(a, v)} /></td>
                   <td className="px-3 py-2">
                     <div className="flex justify-end gap-2">
                       <button className={btnSmall} onClick={() => setResetFor(a)}>Parolni yangilash</button>
-                      {a.id !== me.id && <button className={btnDanger} onClick={() => window.confirm(`${a.login} o'chirilsinmi?`) && act(() => call("adminDeleteAdmin", { id: a.id }))}>O'chirish</button>}
+                      {a.id !== me.id && <button className={btnDanger} onClick={() => remove(a)}>O'chirish</button>}
                     </div>
                   </td>
                 </tr>
@@ -51,8 +55,8 @@ export default function Admins({ me }: { me: Admin }) {
           </table>
         </div>
       )}
-      {creating && <CreateModal onClose={() => setCreating(false)} onDone={() => { setCreating(false); load(); }} />}
-      {resetFor && <ResetModal admin={resetFor} isMe={resetFor.id === me.id} onClose={() => setResetFor(null)} onDone={() => { setResetFor(null); load(); }} />}
+      {creating && <CreateModal onClose={() => setCreating(false)} onDone={() => { setCreating(false); reload(); }} />}
+      {resetFor && <ResetModal admin={resetFor} isMe={resetFor.id === me.id} onClose={() => setResetFor(null)} onDone={() => { setResetFor(null); reload(); }} />}
       {own && <OwnPasswordModal onClose={() => setOwn(false)} />}
     </div>
   );
