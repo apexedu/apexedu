@@ -1,6 +1,7 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
-import { call, Row } from "./adminApi";
-import { btnGhost, btnSmall, cardCls, ErrorBox, errText, fmtDate, inputCls, Loading, Modal, PageHeader } from "./ui";
+import { useEffect, useMemo, useState } from "react";
+import { Row } from "./adminApi";
+import { fetchApplications, useCached } from "./cache";
+import { btnGhost, btnSmall, cardCls, ErrorBox, fmtDate, inputCls, Loading, Modal, PageHeader } from "./ui";
 
 const PAGE = 20;
 const uniq = (rows: Row[], key: string) => Array.from(new Set(rows.map((r) => r[key]).filter(Boolean))).sort() as string[];
@@ -10,8 +11,7 @@ const DETAIL: [string, string][] = [
 ];
 
 export default function Applications() {
-  const [rows, setRows] = useState<Row[] | null>(null);
-  const [error, setError] = useState("");
+  const { data: rows, error, reload: load, refreshing } = useCached<Row[]>("applications", fetchApplications, 30000);
   const [q, setQ] = useState("");
   const [from, setFrom] = useState("");
   const [to, setTo] = useState("");
@@ -21,11 +21,6 @@ export default function Applications() {
   const [page, setPage] = useState(1);
   const [sel, setSel] = useState<Row | null>(null);
 
-  const load = useCallback(() => {
-    setError("");
-    call<Row[]>("adminApplications").then(setRows).catch((e) => setError(errText(e)));
-  }, []);
-  useEffect(load, [load]);
   useEffect(() => setPage(1), [q, from, to, course, group, format]);
 
   const filtered = useMemo(() => {
@@ -54,7 +49,7 @@ export default function Applications() {
 
   return (
     <div>
-      <PageHeader title="Arizalar" hint="Saytdan kelgan arizalar (yangisi birinchi)." actions={<button className={btnGhost} onClick={load}>Yangilash</button>} />
+      <PageHeader title="Arizalar" hint="Saytdan kelgan arizalar (yangisi birinchi)." actions={<button className={btnGhost} onClick={load} disabled={refreshing}>{refreshing ? "Yangilanmoqda..." : "Yangilash"}</button>} />
       {error && <ErrorBox message={error} onRetry={load} />}
       {!rows && !error && <Loading />}
       {rows && (
