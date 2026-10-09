@@ -27,7 +27,7 @@ export default function Section({ id, title, subtitle, eyebrow, tone = "light", 
   const dark = tone === "dark";
   const center = align === "center";
   return (
-    <section id={id} className={`relative ${BG[tone]} ${prev ? "pt-28 sm:pt-36" : "pt-20 sm:pt-28"} pb-20 sm:pb-28`}>
+    <section id={id} className={`${prev ? "sec-w" : "sec-n"} relative ${BG[tone]} ${prev ? "pt-28 sm:pt-36" : "pt-20 sm:pt-28"} pb-20 sm:pb-28`}>
       {tone === "tint" && <div className="dots-pattern pointer-events-none absolute inset-0 opacity-60" aria-hidden="true" />}
       {dark && <div className="dots-pattern-dark pointer-events-none absolute inset-0 opacity-50" aria-hidden="true" />}
       {backdrop !== undefined && <EduBackdrop tone={dark ? "dark" : "light"} seed={backdrop} />}
