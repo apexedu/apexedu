@@ -12,10 +12,10 @@ const MAX_SHOWN = 5;
 function Stat({ value, label, go }: { value: string; label: string; go: boolean }) {
   const v = useCountUp(value, go);
   return (
-    <div className="rounded-2xl border border-white/15 bg-white/[0.07] px-4 py-3 backdrop-blur-sm sm:px-5">
+    <div className="rounded-2xl border border-white/15 bg-white/[0.07] px-3 py-2.5 backdrop-blur-sm sm:px-5 sm:py-3">
       <dt className="sr-only">{label}</dt>
-      <dd className="text-2xl font-extrabold tabular-nums sm:text-3xl">{v}</dd>
-      <p className="mt-0.5 text-xs text-white/70 sm:text-sm" aria-hidden="true">{label}</p>
+      <dd className="text-xl font-extrabold tabular-nums sm:text-3xl">{v}</dd>
+      <p className="mt-0.5 text-[0.7rem] leading-tight text-white/70 sm:text-sm" aria-hidden="true">{label}</p>
     </div>
   );
 }
@@ -53,7 +53,7 @@ export default function Hero({ settings, heroCards, groups, phone }: Props) {
   const head = words.join(" ");
 
   return (
-    <section id="top" className="relative isolate overflow-hidden bg-[linear-gradient(135deg,#051a24_0%,#07323f_45%,#0b5d7a_100%)] pb-28 text-white sm:pb-36">
+    <section id="top" className="relative isolate overflow-hidden bg-[linear-gradient(135deg,#051a24_0%,#07323f_45%,#0b5d7a_100%)] pb-20 text-white sm:pb-36">
       {/* Fon: aurora + chiziqli to'r + ta'limga oid suzuvchi belgilar */}
       <div className="pointer-events-none absolute inset-0 -z-10" aria-hidden="true">
         <div className="aurora aurora-a -left-40 -top-40 h-[34rem] w-[34rem]" />
@@ -63,9 +63,9 @@ export default function Hero({ settings, heroCards, groups, phone }: Props) {
         <EduBackdrop tone="dark" seed={0} />
       </div>
 
-      <div className="mx-auto grid max-w-6xl gap-12 px-4 pb-4 pt-14 sm:px-6 sm:pt-20 lg:grid-cols-[1.2fr_1fr] lg:items-center lg:pt-24">
+      <div className="mx-auto grid max-w-6xl gap-9 px-4 pb-4 pt-8 sm:gap-12 sm:px-6 sm:pt-20 lg:grid-cols-[1.2fr_1fr] lg:items-center lg:pt-24">
         <div>
-          <p data-reveal className="inline-flex items-center gap-2 rounded-2xl border border-white/20 bg-white/10 px-4 py-1.5 text-sm font-medium backdrop-blur">
+          <p data-reveal className="inline-flex items-center gap-2 rounded-2xl border border-white/20 bg-white/10 px-3.5 py-1.5 text-[0.8rem] font-medium backdrop-blur sm:px-4 sm:text-sm">
             <span className="relative flex h-2 w-2">
               <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-saffron opacity-75" />
               <span className="relative inline-flex h-2 w-2 rounded-full bg-saffron" />
@@ -73,7 +73,7 @@ export default function Hero({ settings, heroCards, groups, phone }: Props) {
             <span><strong className="font-extrabold text-saffron">{settings.academyName}</strong> · bepul konsultatsiya</span>
           </p>
 
-          <h1 data-reveal style={{ ["--d" as string]: "100ms" }} className="mt-6 text-4xl font-extrabold leading-[1.08] tracking-tight sm:text-6xl">
+          <h1 data-reveal style={{ ["--d" as string]: "100ms" }} className="mt-5 text-[2.1rem] font-extrabold leading-[1.1] tracking-tight sm:mt-6 sm:text-6xl">
             {head}{" "}
             {last && (
               <span className="relative inline-block bg-gradient-to-r from-saffron via-amber-200 to-saffron bg-clip-text text-transparent">
@@ -85,15 +85,15 @@ export default function Hero({ settings, heroCards, groups, phone }: Props) {
             )}
           </h1>
 
-          <p data-reveal style={{ ["--d" as string]: "200ms" }} className="mt-6 max-w-xl text-lg text-white/80 sm:text-xl">{settings.heroText}</p>
+          <p data-reveal style={{ ["--d" as string]: "200ms" }} className="mt-5 max-w-xl text-base leading-relaxed text-white/80 sm:mt-6 sm:text-xl">{settings.heroText}</p>
 
-          <div data-reveal style={{ ["--d" as string]: "300ms" }} className="mt-9 flex flex-col gap-3 sm:flex-row sm:items-center">
-            <a href="#apply" className="btn-shine glow-saffron group inline-flex items-center justify-center gap-2.5 whitespace-nowrap rounded-2xl bg-saffron px-8 py-4 text-lg font-extrabold text-brand-900 transition hover:-translate-y-0.5 hover:brightness-105">
+          <div data-reveal style={{ ["--d" as string]: "300ms" }} className="mt-7 flex flex-col gap-3 sm:mt-9 sm:flex-row sm:items-center">
+            <a href="#apply" className="btn-shine glow-saffron group inline-flex items-center justify-center gap-2.5 whitespace-nowrap rounded-2xl bg-saffron px-6 py-3.5 text-base font-extrabold text-brand-900 transition hover:-translate-y-0.5 hover:brightness-105 sm:px-8 sm:py-4 sm:text-lg">
               Bepul konsultatsiya
               <Icon name="arrow" className="h-5 w-5 transition-transform group-hover:translate-x-1" />
             </a>
             {phone ? (
-              <a href={telHref(phone)} className="group inline-flex items-center justify-center gap-3 rounded-2xl border-2 border-white/30 bg-white/5 px-6 py-3.5 text-lg font-bold backdrop-blur transition hover:border-white hover:bg-white hover:text-brand-900">
+              <a href={telHref(phone)} className="group inline-flex items-center justify-center gap-3 rounded-2xl border-2 border-white/30 bg-white/5 px-5 py-2.5 text-base font-bold backdrop-blur sm:px-6 sm:py-3.5 sm:text-lg transition hover:border-white hover:bg-white hover:text-brand-900">
                 <span className="relative flex h-9 w-9 items-center justify-center rounded-full bg-white text-brand-600">
                   <span className="pulse-ring text-white" />
                   <Icon name="phone" className="ringing h-4.5 w-4.5" />
@@ -108,7 +108,7 @@ export default function Hero({ settings, heroCards, groups, phone }: Props) {
             )}
           </div>
 
-          <dl ref={statsRef} data-reveal style={{ ["--d" as string]: "420ms" }} className="mt-10 grid max-w-md grid-cols-3 gap-3">
+          <dl ref={statsRef} data-reveal style={{ ["--d" as string]: "420ms" }} className="mt-8 grid max-w-md grid-cols-3 gap-2.5 sm:mt-10 sm:gap-3">
             {settings.stats.map((s) => <Stat key={s.label} value={s.value} label={s.label} go={statsOn} />)}
           </dl>
         </div>
@@ -124,21 +124,21 @@ export default function Hero({ settings, heroCards, groups, phone }: Props) {
             </div>
 
             <div
-              className="relative overflow-hidden rounded-3xl border border-white/20 bg-white/10 p-6 shadow-2xl backdrop-blur-md sm:p-7"
+              className="relative overflow-hidden rounded-3xl border border-white/20 bg-white/10 p-5 shadow-2xl backdrop-blur-md sm:p-7"
               onMouseEnter={() => setPaused(true)}
               onMouseLeave={() => setPaused(false)}
-              style={{ minHeight: tallest * 64 + 130 }}
+              style={{ minHeight: tallest * 60 + 120 }}
             >
               {slides.length > 1 && (
                 <span key={`${current.id}-${i}`} className="slide-progress absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-saffron to-sky" style={{ animationPlayState: paused ? "paused" : "running" }} aria-hidden="true" />
               )}
               <div key={current.id} className="slide-up">
-                <p className="flex items-center gap-2 text-sm font-semibold uppercase tracking-wider text-saffron">
+                <p className="flex items-center gap-2 text-[0.8rem] font-semibold uppercase tracking-wider text-saffron sm:text-sm">
                   <Icon name="book" className="h-4 w-4" /> {current.title}
                 </p>
-                <ol className="mt-5 space-y-3">
+                <ol className="mt-4 space-y-2.5 sm:mt-5 sm:space-y-3">
                   {current.groups.slice(0, MAX_SHOWN).map((g, idx) => (
-                    <li key={g.id} className="flex items-center gap-4 rounded-2xl bg-white/10 px-4 py-3 transition hover:bg-white/20" style={{ animation: `slide-up .45s ease-out ${idx * 70}ms both` }}>
+                    <li key={g.id} className="flex items-center gap-3 rounded-2xl bg-white/10 px-3.5 py-2.5 transition hover:bg-white/20 sm:gap-4 sm:px-4 sm:py-3" style={{ animation: `slide-up .45s ease-out ${idx * 70}ms both` }}>
                       <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-white text-sm font-extrabold text-brand-900">{idx + 1}</span>
                       <span className="font-semibold">{g.name}</span>
                       <span className="ml-auto hidden h-1.5 w-16 overflow-hidden rounded-full bg-white/15 sm:block" aria-hidden="true">
@@ -152,7 +152,7 @@ export default function Hero({ settings, heroCards, groups, phone }: Props) {
                 )}
               </div>
               {slides.length > 1 && (
-                <div className="mt-6 flex gap-2" role="tablist" aria-label="Kurslar">
+                <div className="mt-5 flex gap-2 sm:mt-6" role="tablist" aria-label="Kurslar">
                   {slides.map((s, idx) => (
                     <button
                       key={s.id}
@@ -160,7 +160,7 @@ export default function Hero({ settings, heroCards, groups, phone }: Props) {
                       aria-selected={idx === i}
                       aria-label={s.title}
                       onClick={() => setI(idx)}
-                      className={`h-2 rounded-full transition-all duration-300 ${idx === i ? "w-8 bg-saffron" : "w-2 bg-white/40 hover:bg-white/70"}`}
+                      className={`relative before:absolute before:-inset-x-1.5 before:-inset-y-3 before:content-[''] h-2 rounded-full transition-all duration-300 ${idx === i ? "w-8 bg-saffron" : "w-2 bg-white/40 hover:bg-white/70"}`}
                     />
                   ))}
                 </div>
