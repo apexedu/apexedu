@@ -14,13 +14,15 @@ export default function Footer({ name, phone }: { name: string; phone?: string }
   return (
     <footer className="relative overflow-hidden bg-night pb-28 pt-14 text-sm text-white/70 md:pb-10">
       <div className="pointer-events-none absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-saffron via-sky to-leaf" aria-hidden="true" />
-      <div className="mx-auto max-w-6xl px-4 sm:px-6">
+      <p className="pointer-events-none absolute inset-x-0 bottom-10 select-none whitespace-nowrap text-center text-[18vw] font-extrabold leading-none tracking-tighter text-white/[0.04] md:bottom-4" aria-hidden="true">{name}</p>
+      <div className="relative mx-auto max-w-6xl px-4 sm:px-6">
         <div className="grid gap-10 md:grid-cols-[1.2fr_1fr_1fr]">
           <div>
             <div className="inline-block rounded-2xl bg-white px-4 py-2">
-              <Logo name={name} className="h-14 w-auto" />
+              <Logo name={name} className="h-20 w-auto" />
             </div>
-            <p className="mt-4 max-w-xs">Tilni yodlash emas, ishlatish orqali o'rgatamiz.</p>
+            <p className="mt-4 text-2xl font-extrabold tracking-tight text-white">{name}</p>
+            <p className="mt-1 max-w-xs">Tilni yodlash emas, ishlatish orqali o'rgatamiz.</p>
           </div>
           <nav aria-label="Pastki menyu">
             <p className="mb-3 font-bold text-white">Bo'limlar</p>
