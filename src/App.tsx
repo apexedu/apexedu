@@ -49,17 +49,17 @@ export default function App() {
       <Header name={data.settings.academyName} phone={phone} />
       <main>
         <Hero settings={data.settings} heroCards={data.heroCards} groups={data.groups} phone={phone} />
-        <Marquee />
+        <Marquee name={data.settings.academyName} />
         <About name={data.settings.academyName} />
         <Advantages items={data.advantages} />
         <Courses courses={data.courses} groups={data.groups} onApply={apply} />
-        <CtaBand phone={phone} />
+        <CtaBand name={data.settings.academyName} phone={phone} />
         <Formats formats={data.formats} />
-        <Teachers teachers={data.teachers} />
+        <Teachers teachers={data.teachers} name={data.settings.academyName} />
         <Testimonials items={data.testimonials} />
         <Reviews reviews={data.reviews} />
-        <Faq items={data.faqs} phone={phone} />
-        <ApplyForm key={preset.n} courses={data.courses} groups={data.groups} formats={data.formats} presetCourse={preset.courseId} presetGroup={preset.groupId} callPhone={phone} telegram={data.settings.telegram} />
+        <Faq items={data.faqs} phone={phone} name={data.settings.academyName} />
+        <ApplyForm key={preset.n} courses={data.courses} groups={data.groups} formats={data.formats} presetCourse={preset.courseId} presetGroup={preset.groupId} callPhone={phone} telegram={data.settings.telegram} name={data.settings.academyName} />
         <Contact settings={data.settings} />
       </main>
       <Footer name={data.settings.academyName} phone={phone} />
