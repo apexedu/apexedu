@@ -2,6 +2,7 @@ import { Component, ReactNode, StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import App from "./App";
 import "./index.css";
+import "./site.css";
 
 // Kutilmagan xatoda oq ekran o'rniga do'stona xabar ko'rsatadi va saqlangan eski ma'lumotni tozalaydi
 class Boundary extends Component<{ children: ReactNode }, { failed: boolean }> {
@@ -31,6 +32,7 @@ class Boundary extends Component<{ children: ReactNode }, { failed: boolean }> {
   }
 }
 
+document.body.classList.add("site");
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <Boundary>
