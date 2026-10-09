@@ -21,7 +21,7 @@ export default function Contact({ settings: s }: { settings: Settings }) {
   const socials = ([["Instagram", s.instagram], ["Facebook", s.facebook], ["YouTube", s.youtube]] as [string, string][]).filter(([, u]) => u);
   let i = 0;
   return (
-    <Section id="contact" title="Aloqa" eyebrow="Bog'laning" tone="tint" prev="dark" wave="curve" backdrop={8} subtitle="Qulay usulni tanlang — biz doim aloqadamiz.">
+    <Section id="contact" title="Aloqa" eyebrow="Bog'laning" tone="tint" prev="dark" wave="curve" backdrop={8} subtitle={`${s.academyName} bilan bog'lanish uchun qulay usulni tanlang.`}>
       <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
         <Card i={i++} icon="phone" title="Telefon">
           {s.phones.map((p, k) => <a key={`${p}-${k}`} href={telHref(p)} className="block transition hover:text-brand-600">{p}</a>)}
