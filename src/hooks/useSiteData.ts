@@ -9,7 +9,7 @@ function readCache(): SiteData | null {
     const raw = localStorage.getItem(KEY);
     if (!raw) return null;
     const d = JSON.parse(raw);
-    return d && d.settings && Array.isArray(d.courses) && Array.isArray(d.reviews) ? (d as SiteData) : null;
+    return d && d.settings && Array.isArray(d.courses) && Array.isArray(d.reviews) && Array.isArray(d.heroCards) ? (d as SiteData) : null;
   } catch {
     return null;
   }
