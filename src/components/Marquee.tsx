@@ -2,11 +2,11 @@
 // va ta'limga oid (til) kayfiyat beradi.
 const WORDS = ["Merhaba", "Hello", "Salom", "Teşekkürler", "Thank you", "Rahmat", "Günaydın", "Good morning", "Hoş geldiniz", "Welcome", "Başarılar", "Success"];
 
-export default function Marquee() {
+export default function Marquee({ name }: { name: string }) {
   const row = (k: string) => (
     <div className="flex shrink-0 items-center" key={k} aria-hidden={k === "b"}>
-      {WORDS.map((w, i) => (
-        <span key={i} className="flex items-center whitespace-nowrap px-6 text-lg font-extrabold uppercase tracking-wide text-brand-900 sm:px-8 sm:text-2xl">
+      {WORDS.flatMap((w, i) => (i % 3 === 2 ? [w, name] : [w])).map((w, i) => (
+        <span key={i} className={`flex items-center whitespace-nowrap px-6 text-lg font-extrabold uppercase tracking-wide sm:px-8 sm:text-2xl ${w === name ? "text-white drop-shadow-sm" : "text-brand-900"}`}>
           {w}
           <span className="ml-6 text-brand-900/40 sm:ml-8">✦</span>
         </span>
