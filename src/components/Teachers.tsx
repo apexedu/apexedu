@@ -42,7 +42,7 @@ function Avatar({ t }: { t: Teacher }) {
   );
 }
 
-export default function Teachers({ teachers }: { teachers: Teacher[] }) {
+export default function Teachers({ teachers, name }: { teachers: Teacher[]; name: string }) {
   const n = teachers.length;
   const [active, setActive] = useState(0);
   const [paused, setPaused] = useState(false);
@@ -71,7 +71,7 @@ export default function Teachers({ teachers }: { teachers: Teacher[] }) {
   const half = Math.floor(n / 2);
 
   return (
-    <Section id="teachers" title="O'qituvchilar" eyebrow="Jamoa" tone="light" prev="tint" wave="curve" backdrop={5} subtitle="Har bir talabaga e'tibor beradigan tajribali ustozlar.">
+    <Section id="teachers" title="O'qituvchilar" eyebrow="Jamoa" tone="light" prev="tint" wave="curve" backdrop={5} subtitle={`${name} ustozlari — har bir talabaga e'tibor beradigan tajribali mutaxassislar.`}>
       <div
         ref={box}
         data-reveal className="relative h-[27rem] overflow-hidden"
