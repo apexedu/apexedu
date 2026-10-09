@@ -16,7 +16,8 @@
 }
 
 html { scroll-behavior: smooth; scroll-padding-top: 88px; }
-body { font-family: var(--font-sans); color: var(--color-ink); -webkit-font-smoothing: antialiased; }
+html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+body { -webkit-tap-highlight-color: transparent; font-family: var(--font-sans); color: var(--color-ink); -webkit-font-smoothing: antialiased; }
 :focus-visible { outline: 2px solid var(--color-brand-600); outline-offset: 2px; }
 @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } * { transition: none !important; animation: none !important; } }
 
