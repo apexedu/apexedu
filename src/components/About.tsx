@@ -1,52 +1,45 @@
 import Section from "./Section";
-import type { Advantage, Format, Testimonial } from "../types";
+import { Icon } from "./icons";
 
-interface Props { name: string; formats: Format[]; advantages: Advantage[]; testimonials: Testimonial[] }
+const LEVELS = ["A1", "A2", "B1", "B2", "C1"];
 
-const h3 = "mb-5 mt-14 text-xl font-semibold tracking-tight";
-
-export default function About({ name, formats, advantages, testimonials }: Props) {
+export default function About({ name }: { name: string }) {
   return (
-    <Section id="about" title={`${name} haqida`}>
-      <div className="grid gap-8 md:grid-cols-2">
-        <p className="leading-relaxed text-slate-700">
-          Biz tilni yodlash emas, ishlatish orqali o'rgatamiz. Har bir guruh darajasiga mos dastur bilan ishlaydi,
-          shuning uchun talaba o'z tezligida va tushunib oldinga siljiydi.
-        </p>
-        <p className="leading-relaxed text-slate-700">
-          Darslar kichik guruhlarda o'tadi. O'qituvchi har bir talabaning xatosini ko'radi va darhol to'g'rilaydi.
-          Maqsad — sertifikat olish, o'qish yoki ishlash uchun tilni haqiqatan ham bilish.
-        </p>
-      </div>
+    <Section id="about" title={`${name} haqida`} eyebrow="Biz haqimizda" backdrop={1}>
+      <div className="grid items-center gap-12 lg:grid-cols-[1.1fr_1fr]">
+        <div className="space-y-5 text-lg leading-relaxed text-slate-700">
+          <p data-reveal>
+            Biz tilni yodlash emas, <strong className="text-brand-900">ishlatish</strong> orqali o'rgatamiz. Har bir guruh darajasiga mos dastur bilan ishlaydi,
+            shuning uchun talaba o'z tezligida va tushunib oldinga siljiydi.
+          </p>
+          <p data-reveal style={{ ["--d" as string]: "120ms" }}>
+            Darslar kichik guruhlarda o'tadi. O'qituvchi har bir talabaning xatosini ko'radi va darhol to'g'rilaydi.
+            Maqsad — sertifikat olish, o'qish yoki ishlash uchun tilni haqiqatan ham bilish.
+          </p>
+          <a data-reveal style={{ ["--d" as string]: "240ms" }} href="#courses" className="group inline-flex items-center gap-2 font-bold text-brand-600">
+            Kurslar bilan tanishing <Icon name="arrow" className="h-5 w-5 transition-transform group-hover:translate-x-1.5" />
+          </a>
+        </div>
 
-      <h3 className={h3}>Nega ApexEdu</h3>
-      <div className="grid gap-x-10 gap-y-8 sm:grid-cols-2">
-        {advantages.map((a) => (
-          <div key={a.id} className="border-l-2 border-brand-600 pl-4">
-            <h4 className="font-semibold">{a.title}</h4>
-            <p className="mt-1 text-slate-600">{a.text}</p>
+        {/* Daraja zinapoyasi: balandlikka o'sib chiqadi (logotipdagi o'sish strelkasi g'oyasi) */}
+        <div data-reveal="zoom" className="relative rounded-3xl border border-brand-600/10 bg-gradient-to-br from-brand-50 to-white p-6 shadow-[0_30px_60px_-30px_rgba(11,93,122,0.35)] sm:p-8" aria-hidden="true">
+          <p className="mb-6 flex items-center gap-2 text-sm font-bold uppercase tracking-wider text-brand-600"><Icon name="trend" className="h-4 w-4" /> Noldan yuqori darajagacha</p>
+          <div className="flex h-52 items-end gap-3 sm:h-60">
+            {LEVELS.map((l, i) => (
+              <div key={l} className="flex h-full flex-1 flex-col justify-end">
+                <div
+                  className="step-bar flex items-start justify-center rounded-t-2xl bg-gradient-to-t from-brand-600 to-sky pt-3 text-sm font-extrabold text-white shadow-lg"
+                  style={{ height: `${28 + i * 18}%`, ["--d" as string]: `${300 + i * 140}ms`, filter: `saturate(${0.8 + i * 0.1})` }}
+                >
+                  {l}
+                </div>
+              </div>
+            ))}
           </div>
-        ))}
-      </div>
-
-      <h3 className={h3}>Ta'lim formatlari</h3>
-      <div className="grid gap-6 sm:grid-cols-2">
-        {formats.map((f) => (
-          <div key={f.id} className="rounded-2xl border border-slate-200 bg-mist p-6">
-            <h4 className="text-lg font-semibold">{f.name}</h4>
-            <p className="mt-2 text-slate-600">{f.description}</p>
+          <div className="absolute -right-3 -top-3 flex h-14 w-14 items-center justify-center rounded-2xl bg-saffron text-brand-900 shadow-xl bob">
+            <Icon name="cap" className="h-7 w-7" />
           </div>
-        ))}
-      </div>
-
-      <h3 className={h3}>Talabalar natijalari</h3>
-      <div className="grid gap-6 md:grid-cols-2">
-        {testimonials.map((t) => (
-          <figure key={t.id} className="rounded-2xl border border-slate-200 p-6">
-            <blockquote className="text-slate-700">{t.text}</blockquote>
-            <figcaption className="mt-4 text-sm"><span className="font-semibold">{t.name}</span> — {t.result}</figcaption>
-          </figure>
-        ))}
+        </div>
       </div>
     </Section>
   );
