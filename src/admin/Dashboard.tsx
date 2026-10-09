@@ -1,6 +1,7 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
-import { call, Row } from "./adminApi";
-import { cardCls, ErrorBox, errText, Loading, PageHeader } from "./ui";
+import { useMemo } from "react";
+import { Row } from "./adminApi";
+import { fetchApplications, useCached } from "./cache";
+import { btnGhost, cardCls, ErrorBox, Loading, PageHeader } from "./ui";
 
 // Sana kalitlari Toshkent vaqtida saqlangan created_at dan (YYYY-MM-DD...) olinadi
 const todayStr = () => new Intl.DateTimeFormat("en-CA", { timeZone: "Asia/Tashkent" }).format(new Date());
@@ -74,13 +75,7 @@ function Stat({ label, value }: { label: string; value: number }) {
 }
 
 export default function Dashboard() {
-  const [rows, setRows] = useState<Row[] | null>(null);
-  const [error, setError] = useState("");
-  const load = useCallback(() => {
-    setError("");
-    call<Row[]>("adminApplications").then(setRows).catch((e) => setError(errText(e)));
-  }, []);
-  useEffect(load, [load]);
+  const { data: rows, error, reload: load, refreshing } = useCached<Row[]>("applications", fetchApplications, 30000);
 
   const s = useMemo(() => {
     if (!rows) return null;
@@ -117,7 +112,7 @@ export default function Dashboard() {
 
   return (
     <div>
-      <PageHeader title="Dashboard" hint="Arizalar statistikasi (Toshkent vaqti bilan)." />
+      <PageHeader title="Dashboard" hint="Arizalar statistikasi (Toshkent vaqti bilan)." actions={<button className={btnGhost} onClick={load} disabled={refreshing}>{refreshing ? "Yangilanmoqda..." : "Yangilash"}</button>} />
       {error && <ErrorBox message={error} onRetry={load} />}
       {!rows && !error && <Loading />}
       {s && (
