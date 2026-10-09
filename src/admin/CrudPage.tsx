@@ -1,5 +1,6 @@
-import { ReactNode, useCallback, useEffect, useState } from "react";
-import { call, Row } from "./adminApi";
+import { ReactNode, useState } from "react";
+import { call, Row, scheduleWarm } from "./adminApi";
+import { useCached } from "./cache";
 import { btnDanger, btnGhost, btnPrimary, btnSmall, cardCls, ErrorBox, errText, Field, inputCls, Loading, Modal, PageHeader, Toggle } from "./ui";
 
 export interface FieldDef {
@@ -12,6 +13,7 @@ export interface FieldDef {
 export interface ColDef { key: string; label: string; render?: (r: Row, refs: Record<string, Row[]>) => ReactNode }
 export interface CrudConfig {
   sheet: string;
+  required: string[];
   title: string;
   hint?: string;
   singular: string;
@@ -84,88 +86,87 @@ function PhotoField({ value, onChange }: { value: string; onChange: (v: string) 
 }
 
 export default function CrudPage({ cfg }: { cfg: CrudConfig }) {
-  const [rows, setRows] = useState<Row[] | null>(null);
-  const [refs, setRefs] = useState<Record<string, Row[]>>({});
-  const [error, setError] = useState("");
+  const refSheet = cfg.fields.find((f) => f.type === "ref")?.refSheet;
+  const { data: rows, error: loadErr, reload, mutate } = useCached<Row[]>(`sheet:${cfg.sheet}`, () => call<Row[]>("adminListSheet", { sheet: cfg.sheet }));
+  const { data: refRows } = useCached<Row[]>(refSheet ? `sheet:${refSheet}` : "sheet:__none", () => (refSheet ? call<Row[]>("adminListSheet", { sheet: refSheet }) : Promise.resolve([])));
+  const refs: Record<string, Row[]> = refSheet ? { [refSheet]: refRows ?? [] } : {};
+
+  const [notice, setNotice] = useState("");
   const [editing, setEditing] = useState<Row | null>(null);
   const [isNew, setIsNew] = useState(false);
   const [form, setForm] = useState<Row>({});
-  const [saving, setSaving] = useState(false);
   const [formErr, setFormErr] = useState("");
-
-  const load = useCallback(async () => {
-    setError("");
-    try {
-      const refSheets = Array.from(new Set(cfg.fields.filter((f) => f.type === "ref").map((f) => f.refSheet!)));
-      const [list, ...rl] = await Promise.all([
-        call<Row[]>("adminListSheet", { sheet: cfg.sheet }),
-        ...refSheets.map((s) => call<Row[]>("adminListSheet", { sheet: s })),
-      ]);
-      setRows(list);
-      setRefs(Object.fromEntries(refSheets.map((s, i) => [s, rl[i]])));
-    } catch (e) {
-      setError(errText(e));
-    }
-  }, [cfg]);
-  useEffect(() => { load(); }, [load]);
 
   function openForm(row: Row | null) {
     setFormErr("");
     setIsNew(!row);
-    const init: Row = row ? { ...row } : { [cfg.activeKey]: cfg.activeKey === "active", rating: 5 };
-    setForm(init);
+    setForm(row ? { ...row } : { [cfg.activeKey]: cfg.activeKey === "active", rating: 5 });
     setEditing(row ?? {});
   }
 
+  // Optimistik saqlash: oyna darhol yopiladi, o'zgarish darhol ko'rinadi, server fonda yangilanadi
   async function save() {
-    setSaving(true);
-    setFormErr("");
-    try {
-      const payload: Row = {};
-      cfg.fields.forEach((f) => { payload[f.key] = form[f.key] ?? (f.type === "bool" ? false : ""); });
-      if (!isNew) payload.id = editing!.id;
-      await call("adminUpsert", { sheet: cfg.sheet, row: payload });
-      setEditing(null);
-      await load();
-    } catch (e) {
-      setFormErr(errText(e));
-    } finally {
-      setSaving(false);
+    const missing = cfg.required.find((k) => !String(form[k] ?? "").trim());
+    if (missing) { setFormErr("Majburiy maydonlar to'ldirilmagan."); return; }
+    const payload: Row = {};
+    cfg.fields.forEach((f) => { payload[f.key] = form[f.key] ?? (f.type === "bool" ? false : ""); });
+    const editId = editing?.id;
+    const before = rows;
+    setEditing(null);
+    setNotice("");
+    if (isNew) {
+      const tmp = "tmp-" + Math.random().toString(36).slice(2);
+      mutate((rs) => [...(rs ?? []), { ...payload, id: tmp, _pending: true }]);
+      try {
+        const r = await call<{ id: string }>("adminUpsert", { sheet: cfg.sheet, row: payload });
+        mutate((rs) => (rs ?? []).map((x) => (x.id === tmp ? { ...x, id: r.id, _pending: false } : x)));
+        scheduleWarm();
+      } catch (e) {
+        mutate((rs) => (rs ?? []).filter((x) => x.id !== tmp));
+        setNotice(errText(e));
+      }
+    } else {
+      mutate((rs) => (rs ?? []).map((x) => (x.id === editId ? { ...x, ...payload } : x)));
+      try {
+        await call("adminUpsert", { sheet: cfg.sheet, row: { ...payload, id: editId } });
+        scheduleWarm();
+      } catch (e) {
+        mutate(() => before ?? []);
+        setNotice(errText(e));
+      }
     }
   }
 
-  async function toggleActive(r: Row) {
-    try {
-      await call("adminUpsert", { sheet: cfg.sheet, row: { id: r.id, [cfg.activeKey]: !r[cfg.activeKey] } });
-      setRows((rs) => rs && rs.map((x) => (x.id === r.id ? { ...x, [cfg.activeKey]: !r[cfg.activeKey] } : x)));
-    } catch (e) {
-      setError(errText(e));
-    }
+  function toggleActive(r: Row) {
+    if (r._pending) return;
+    const v = !r[cfg.activeKey];
+    const set = (val: boolean) => mutate((rs) => (rs ?? []).map((x) => (x.id === r.id ? { ...x, [cfg.activeKey]: val } : x)));
+    set(v);
+    call("adminUpsert", { sheet: cfg.sheet, row: { id: r.id, [cfg.activeKey]: v } })
+      .then(scheduleWarm)
+      .catch((e) => { set(!v); setNotice(errText(e)); });
   }
 
-  async function remove(r: Row) {
+  function remove(r: Row) {
+    if (r._pending) return;
     if (!window.confirm("Rostdan ham o'chirilsinmi? Buni qaytarib bo'lmaydi. (Yashirish uchun o'chirgich tugmasidan foydalaning.)")) return;
-    try {
-      await call("adminDelete", { sheet: cfg.sheet, id: r.id });
-      await load();
-    } catch (e) {
-      setError(errText(e));
-    }
+    setNotice("");
+    mutate((rs) => (rs ?? []).filter((x) => x.id !== r.id));
+    call("adminDelete", { sheet: cfg.sheet, id: r.id })
+      .then(scheduleWarm)
+      .catch((e) => { setNotice(errText(e)); reload(); });
   }
 
-  async function move(i: number, dir: -1 | 1) {
+  function move(i: number, dir: -1 | 1) {
     if (!rows) return;
     const j = i + dir;
-    if (j < 0 || j >= rows.length) return;
+    if (j < 0 || j >= rows.length || rows[i]._pending || rows[j]._pending) return;
     const next = rows.slice();
     [next[i], next[j]] = [next[j], next[i]];
-    setRows(next);
-    try {
-      await call("adminReorder", { sheet: cfg.sheet, ids: next.map((r) => r.id) });
-    } catch (e) {
-      setError(errText(e));
-      load();
-    }
+    mutate(() => next);
+    call("adminReorder", { sheet: cfg.sheet, ids: next.map((r) => r.id) })
+      .then(scheduleWarm)
+      .catch((e) => { setNotice(errText(e)); reload(); });
   }
 
   return (
@@ -175,9 +176,9 @@ export default function CrudPage({ cfg }: { cfg: CrudConfig }) {
         hint={cfg.hint}
         actions={cfg.canCreate && <button className={btnPrimary} onClick={() => openForm(null)}>+ Qo'shish</button>}
       />
-      {error && <div className="mb-4"><ErrorBox message={error} onRetry={load} /></div>}
+      {(notice || loadErr) && <div className="mb-4"><ErrorBox message={notice || loadErr} onRetry={reload} /></div>}
       {!rows ? (
-        !error && <Loading />
+        !loadErr && <Loading />
       ) : rows.length === 0 ? (
         <p className={`${cardCls} text-slate-500`}>Hozircha yozuv yo'q.</p>
       ) : (
@@ -193,7 +194,7 @@ export default function CrudPage({ cfg }: { cfg: CrudConfig }) {
             </thead>
             <tbody className="divide-y divide-slate-100">
               {rows.map((r, i) => (
-                <tr key={r.id} className={r[cfg.activeKey] ? "" : "bg-slate-50 text-slate-500"}>
+                <tr key={r.id} className={`${r[cfg.activeKey] ? "" : "bg-slate-50 text-slate-500"} ${r._pending ? "opacity-60" : ""}`}>
                   {cfg.ordered && (
                     <td className="px-3 py-2">
                       <div className="flex gap-1">
@@ -206,8 +207,8 @@ export default function CrudPage({ cfg }: { cfg: CrudConfig }) {
                   <td className="px-3 py-2"><Toggle checked={!!r[cfg.activeKey]} onChange={() => toggleActive(r)} label={cfg.activeLabel} /></td>
                   <td className="px-3 py-2">
                     <div className="flex justify-end gap-2">
-                      <button className={btnSmall} onClick={() => openForm(r)}>Tahrirlash</button>
-                      <button className={btnDanger} onClick={() => remove(r)}>O'chirish</button>
+                      <button className={btnSmall} onClick={() => !r._pending && openForm(r)} disabled={!!r._pending}>Tahrirlash</button>
+                      <button className={btnDanger} onClick={() => remove(r)} disabled={!!r._pending}>O'chirish</button>
                     </div>
                   </td>
                 </tr>
@@ -245,7 +246,7 @@ export default function CrudPage({ cfg }: { cfg: CrudConfig }) {
             {formErr && <ErrorBox message={formErr} />}
             <div className="flex justify-end gap-3 pt-2">
               <button className={btnGhost} onClick={() => setEditing(null)}>Bekor qilish</button>
-              <button className={btnPrimary} onClick={save} disabled={saving}>{saving ? "Saqlanmoqda..." : "Saqlash"}</button>
+              <button className={btnPrimary} onClick={save}>Saqlash</button>
             </div>
           </div>
         </Modal>
