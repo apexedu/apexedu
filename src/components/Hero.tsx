@@ -65,12 +65,12 @@ export default function Hero({ settings, heroCards, groups, phone }: Props) {
 
       <div className="mx-auto grid max-w-6xl gap-12 px-4 pb-4 pt-14 sm:px-6 sm:pt-20 lg:grid-cols-[1.2fr_1fr] lg:items-center lg:pt-24">
         <div>
-          <p data-reveal className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-1.5 text-sm font-medium backdrop-blur">
+          <p data-reveal className="inline-flex items-center gap-2 rounded-2xl border border-white/20 bg-white/10 px-4 py-1.5 text-sm font-medium backdrop-blur">
             <span className="relative flex h-2 w-2">
               <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-saffron opacity-75" />
               <span className="relative inline-flex h-2 w-2 rounded-full bg-saffron" />
             </span>
-            Bepul konsultatsiya va daraja aniqlash
+            <span><strong className="font-extrabold text-saffron">{settings.academyName}</strong> · bepul konsultatsiya</span>
           </p>
 
           <h1 data-reveal style={{ ["--d" as string]: "100ms" }} className="mt-6 text-4xl font-extrabold leading-[1.08] tracking-tight sm:text-6xl">
