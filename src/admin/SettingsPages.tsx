@@ -1,43 +1,34 @@
-import { useCallback, useEffect, useState } from "react";
-import { call, Row } from "./adminApi";
+import { useEffect, useState } from "react";
+import { call, Row, scheduleWarm } from "./adminApi";
+import { setCached, useCached } from "./cache";
 import { btnGhost, btnPrimary, cardCls, ErrorBox, errText, Field, inputCls, Loading, PageHeader, Toggle } from "./ui";
 
-function useLoad<T>(action: string) {
-  const [data, setData] = useState<T | null>(null);
-  const [error, setError] = useState("");
-  const load = useCallback(() => {
-    setError("");
-    call<T>(action).then(setData).catch((e) => setError(errText(e)));
-  }, [action]);
-  useEffect(load, [load]);
-  return { data, setData, error, load };
-}
+type Msg = { ok: boolean; text: string } | null;
+const Notice = ({ msg }: { msg: Msg }) =>
+  !msg ? null : msg.ok ? <p role="status" className="rounded-xl bg-brand-50 p-3 text-sm text-brand-900">{msg.text}</p> : <ErrorBox message={msg.text} />;
 
 // ---------------- Umumiy / aloqa sozlamalari ----------------
 interface Stat { value: string; label: string }
 
 export function GeneralSettings() {
-  const { data, setData, error, load } = useLoad<Row>("adminGetSettings");
-  const [saving, setSaving] = useState(false);
-  const [msg, setMsg] = useState<{ ok: boolean; text: string } | null>(null);
+  const { data: remote, error, reload } = useCached<Row>("settings", () => call<Row>("adminGetSettings"));
+  const [data, setData] = useState<Row | null>(null);
+  const [msg, setMsg] = useState<Msg>(null);
+  // Tahrir uchun mahalliy nusxa: saqlanmagan o'zgarishlar keshga tushmaydi
+  useEffect(() => { if (remote && !data) setData(JSON.parse(JSON.stringify(remote))); }, [remote, data]);
   const set = (k: string, v: unknown) => setData((d) => (d ? { ...d, [k]: v } : d));
 
-  async function save() {
+  // Optimistik: "Saqlandi" darhol ko'rinadi, xato bo'lsa xabar almashadi
+  function save() {
     if (!data) return;
-    setSaving(true);
-    setMsg(null);
-    try {
-      await call("adminSaveSettings", { values: data });
-      setMsg({ ok: true, text: "Saqlandi. Sayt ~1 daqiqa ichida yangilanadi." });
-    } catch (e) {
-      setMsg({ ok: false, text: errText(e) });
-    } finally {
-      setSaving(false);
-    }
+    setMsg({ ok: true, text: "Saqlandi. Sayt bir necha soniyada yangilanadi." });
+    setCached("settings", data);
+    call("adminSaveSettings", { values: data })
+      .then(scheduleWarm)
+      .catch((e) => { setMsg({ ok: false, text: errText(e) + " (o'zgarishlar saqlanmadi)" }); reload(); });
   }
 
-  if (error) return <ErrorBox message={error} onRetry={load} />;
-  if (!data) return <Loading />;
+  if (!data) return error ? <ErrorBox message={error} onRetry={reload} /> : <Loading />;
   const stats: Stat[] = data.stats ?? [];
   const text = (k: string, label: string, hint?: string) => (
     <Field label={label} hint={hint}><input className={inputCls} value={data[k] ?? ""} onChange={(e) => set(k, e.target.value)} /></Field>
@@ -80,8 +71,8 @@ export function GeneralSettings() {
           {text("facebook", "Facebook", "https://facebook.com/...")}
           {text("youtube", "YouTube", "https://youtube.com/...")}
         </div>
-        {msg && (msg.ok ? <p role="status" className="rounded-xl bg-brand-50 p-3 text-sm text-brand-900">{msg.text}</p> : <ErrorBox message={msg.text} />)}
-        <button className={btnPrimary} onClick={save} disabled={saving}>{saving ? "Saqlanmoqda..." : "Saqlash"}</button>
+        <Notice msg={msg} />
+        <button className={btnPrimary} onClick={save}>Saqlash</button>
       </div>
     </div>
   );
@@ -91,23 +82,25 @@ export function GeneralSettings() {
 interface Tg { enabled: boolean; tokenSet: boolean; chatIds: string[] }
 
 export function TelegramSettings() {
-  const { data, error, load } = useLoad<Tg>("adminGetTelegram");
+  const { data, error, reload } = useCached<Tg>("telegram", () => call<Tg>("adminGetTelegram"));
   const [enabled, setEnabled] = useState(true);
   const [ids, setIds] = useState("");
   const [token, setTokenVal] = useState("");
   const [tokenSet, setTokenSet] = useState(false);
+  const [ready, setReady] = useState(false);
   const [busy, setBusy] = useState(false);
-  const [msg, setMsg] = useState<{ ok: boolean; text: string } | null>(null);
+  const [msg, setMsg] = useState<Msg>(null);
 
   useEffect(() => {
-    if (data) { setEnabled(data.enabled); setIds(data.chatIds.join("\n")); setTokenSet(data.tokenSet); }
-  }, [data]);
+    if (data && !ready) { setEnabled(data.enabled); setIds(data.chatIds.join("\n")); setTokenSet(data.tokenSet); setReady(true); }
+  }, [data, ready]);
 
   async function save() {
     setBusy(true);
     setMsg(null);
     try {
       const r = await call<Tg>("adminSaveTelegram", { enabled, chatIds: ids, ...(token ? { botToken: token } : {}) });
+      setCached("telegram", r);
       setTokenSet(r.tokenSet);
       setTokenVal("");
       setMsg({ ok: true, text: "Saqlandi." });
@@ -134,8 +127,7 @@ export function TelegramSettings() {
     }
   }
 
-  if (error) return <ErrorBox message={error} onRetry={load} />;
-  if (!data) return <Loading />;
+  if (!ready) return error ? <ErrorBox message={error} onRetry={reload} /> : <Loading />;
   return (
     <div>
       <PageHeader title="Telegram sozlamalari" hint="Yangi arizalar shu chatlarga yuboriladi." />
@@ -150,9 +142,9 @@ export function TelegramSettings() {
         <Field label="Chat ID'lar" hint="Har biri alohida qatorda yoki vergul bilan. Bir nechta bo'lishi mumkin.">
           <textarea className={inputCls} rows={4} value={ids} onChange={(e) => setIds(e.target.value)} placeholder={"123456789\n987654321"} />
         </Field>
-        {msg && (msg.ok ? <p role="status" className="rounded-xl bg-brand-50 p-3 text-sm text-brand-900">{msg.text}</p> : <ErrorBox message={msg.text} />)}
+        <Notice msg={msg} />
         <div className="flex gap-3">
-          <button className={btnPrimary} onClick={save} disabled={busy}>Saqlash</button>
+          <button className={btnPrimary} onClick={save} disabled={busy}>{busy ? "Kuting..." : "Saqlash"}</button>
           <button className={btnGhost} onClick={test} disabled={busy}>Ulanishni tekshirish</button>
         </div>
       </div>
@@ -164,7 +156,7 @@ export function TelegramSettings() {
 interface Integ { spreadsheetName: string; spreadsheetUrl: string; webAppUrl: string; counts: Record<string, number | null>; missing: string[] }
 
 export function Integration() {
-  const { data, setData, error, load } = useLoad<Integ>("adminIntegration");
+  const { data, error, reload } = useCached<Integ>("integration", () => call<Integ>("adminIntegration"), 30000);
   const [busy, setBusy] = useState(false);
   const [msg, setMsg] = useState("");
 
@@ -173,7 +165,7 @@ export function Integration() {
     setMsg("");
     try {
       const r = await call<Integ | { ok: boolean }>(action);
-      if ("counts" in r) setData(r);
+      if ("counts" in r) setCached("integration", r);
       setMsg(okText);
     } catch (e) {
       setMsg(errText(e));
@@ -182,8 +174,7 @@ export function Integration() {
     }
   }
 
-  if (error) return <ErrorBox message={error} onRetry={load} />;
-  if (!data) return <Loading />;
+  if (!data) return error ? <ErrorBox message={error} onRetry={reload} /> : <Loading />;
   const apiHost = (() => { try { return new URL(import.meta.env.VITE_API_URL as string).host; } catch { return "sozlanmagan"; } })();
   return (
     <div>
@@ -203,7 +194,7 @@ export function Integration() {
           </ul>
         </div>
         <div className={`${cardCls} space-y-3`}>
-          <p className="text-sm text-slate-600">Sheets'da qo'lda o'zgartirishlar saytda ~1 daqiqada ko'rinadi. Darhol yangilash uchun keshni tozalang.</p>
+          <p className="text-sm text-slate-600">Admin paneldagi o'zgarishlar saytda bir necha soniyada ko'rinadi. Sheets'da qo'lda tahrir qilsangiz ham kesh avtomatik yangilanadi; baribir yangilanmasa, quyidagi tugmani bosing.</p>
           <div className="flex flex-wrap gap-3">
             <button className={btnPrimary} disabled={busy} onClick={() => run("adminClearCache", "Kesh yangilandi.")}>Keshni yangilash</button>
             <button className={btnGhost} disabled={busy} onClick={() => run("adminEnsureSchema", "Tuzilma tekshirildi.")}>Tuzilmani tekshirish</button>
