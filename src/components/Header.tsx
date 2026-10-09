@@ -51,9 +51,9 @@ export default function Header({ name, phone }: { name: string; phone?: string }
   return (
     <header className={`sticky top-0 z-40 transition-all duration-300 ${scrolled ? "bg-white/90 shadow-[0_8px_30px_-12px_rgba(7,50,63,0.35)] backdrop-blur-xl" : "bg-white"}`}>
       <span ref={bar} className="absolute inset-x-0 top-0 h-[3px] origin-left scale-x-0 bg-gradient-to-r from-saffron via-sky to-leaf" aria-hidden="true" />
-      <div className={`mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 transition-all duration-300 sm:px-6 ${scrolled ? "h-[4.5rem]" : "h-[5.5rem]"}`}>
+      <div className={`mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 transition-all duration-300 sm:px-6 ${scrolled ? "h-16 sm:h-[4.5rem]" : "h-20 sm:h-[5.5rem]"}`}>
         <a href="#top" aria-label={name} className="flex shrink-0 items-center gap-1">
-          <Logo name={name} className={`w-auto transition-all duration-300 ${scrolled ? "h-[4.5rem]" : "h-[5.5rem]"}`} />
+          <Logo name={name} className={`w-auto transition-all duration-300 ${scrolled ? "h-12 sm:h-[4.5rem]" : "h-16 sm:h-[5.5rem]"}`} />
           <span className="hidden leading-none min-[420px]:block lg:hidden xl:block">
             <span className="block text-xl font-extrabold tracking-tight text-brand-900 sm:text-2xl">{first}</span>
             {rest && <span className="mt-0.5 block text-sm font-bold tracking-wide text-leaf sm:text-base">{rest}</span>}
