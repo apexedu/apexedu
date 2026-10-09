@@ -34,7 +34,7 @@ export default function App() {
     <>
       <Header name={data.settings.academyName} />
       <main>
-        <Hero settings={data.settings} courses={data.courses} groups={data.groups} />
+        <Hero settings={data.settings} heroCards={data.heroCards} groups={data.groups} />
         <About name={data.settings.academyName} formats={data.formats} advantages={data.advantages} testimonials={data.testimonials} />
         <Courses courses={data.courses} groups={data.groups} onApply={apply} />
         <Teachers teachers={data.teachers} />
