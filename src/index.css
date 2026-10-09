@@ -9,6 +9,10 @@
   --color-brand-700: #094c64;
   --color-brand-900: #07323f;
   --color-saffron: #f0a30a;
+  /* Ommaviy sayt uchun qo'shimcha ranglar (logotipdan) — admin panelga ta'sir qilmaydi */
+  --color-leaf: #4f8a3c;
+  --color-sky: #2fa4bd;
+  --color-night: #051a24;
 }
 
 html { scroll-behavior: smooth; scroll-padding-top: 88px; }
