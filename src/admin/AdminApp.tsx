@@ -1,5 +1,6 @@
 import { FormEvent, useCallback, useEffect, useState } from "react";
 import { Admin, call, getToken, setToken } from "./adminApi";
+import { clearAll, fetchApplications, revalidate, startInit } from "./cache";
 import { btnPrimary, ErrorBox, errText, Field, inputCls, Loading } from "./ui";
 import CrudPage, { CrudConfig } from "./CrudPage";
 import Dashboard from "./Dashboard";
@@ -128,29 +129,39 @@ function Shell({ me, onLogout }: { me: Admin; onLogout: () => void }) {
   );
 }
 
-export default function AdminApp() {
-  const [me, setMe] = useState<Admin | null>(null);
-  const [checking, setChecking] = useState(() => !!getToken());
-  const [checkErr, setCheckErr] = useState("");
+const ME_KEY = "apexedu:admin:me";
+const readMe = (): Admin | null => {
+  try { return getToken() ? (JSON.parse(localStorage.getItem(ME_KEY) ?? "null") as Admin | null) : null; } catch { return null; }
+};
+const storeMe = (a: Admin | null) => {
+  try { if (a) localStorage.setItem(ME_KEY, JSON.stringify(a)); else localStorage.removeItem(ME_KEY); } catch { /* ignore */ }
+};
 
-  const verify = useCallback(() => {
-    if (!getToken()) { setChecking(false); return; }
-    setChecking(true);
-    setCheckErr("");
-    call<{ admin: Admin }>("adminMe")
-      .then((r) => setMe(r.admin))
-      .catch((e) => { if (getToken()) setCheckErr(errText(e)); })
-      .finally(() => setChecking(false));
+export default function AdminApp() {
+  // Oldin kirgan bo'lsa, panel darhol ko'rinadi; tasdiqlash va ma'lumotlar fonda bitta so'rovda (adminInit) keladi
+  const [me, setMe] = useState<Admin | null>(readMe);
+  const [booting, setBooting] = useState(() => !!getToken() && !readMe());
+  const [fatal, setFatal] = useState("");
+
+  const boot = useCallback(() => {
+    if (!getToken()) { setBooting(false); return; }
+    setFatal("");
+    startInit((a) => { setMe(a); storeMe(a); })
+      .catch((e) => { if (getToken()) setFatal(errText(e)); })
+      .finally(() => setBooting(false));
+    // Dashboard uchun arizalar parallel yuklanadi
+    revalidate("applications", fetchApplications, 30000).catch(() => undefined);
   }, []);
-  useEffect(verify, [verify]);
+  useEffect(boot, [boot]);
+
   useEffect(() => {
-    const f = () => setMe(null);
+    const f = () => { clearAll(); storeMe(null); setMe(null); };
     window.addEventListener("admin:logout", f);
     return () => window.removeEventListener("admin:logout", f);
   }, []);
 
-  if (checking) return <Loading text="Tekshirilmoqda..." />;
-  if (checkErr) return <div className="p-8"><ErrorBox message={checkErr} onRetry={verify} /></div>;
-  if (!me) return <Login onLogin={setMe} />;
-  return <Shell me={me} onLogout={() => { setToken(null); setMe(null); }} />;
+  if (booting && !me) return <Loading text="Yuklanmoqda..." />;
+  if (fatal && !me) return <div className="p-8"><ErrorBox message={fatal} onRetry={boot} /></div>;
+  if (!me) return <Login onLogin={(a) => { setMe(a); storeMe(a); boot(); }} />;
+  return <Shell me={me} onLogout={() => { setToken(null); clearAll(); storeMe(null); setMe(null); }} />;
 }
