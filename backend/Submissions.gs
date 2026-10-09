@@ -125,6 +125,7 @@ function submitReview_(b) {
     id = 'REV-' + String(seq).padStart(5, '0');
     // approved = FALSE: admin tasdiqlamaguncha saytda ko'rinmaydi
     appendRow_('Reviews', [id, nowIso_(now), cell_(name), rating, cell_(text), false]);
+    cache.remove('al_Reviews'); // admin ro'yxati yangilansin
     remember_(reqId, id);
     cache.put(rlKey, '1', 60);
   } finally {
