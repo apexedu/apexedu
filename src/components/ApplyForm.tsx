@@ -5,7 +5,7 @@ import { telHref } from "../lib/contact";
 import { ApiError, submitApplication } from "../services/api";
 import type { Course, Format, Group } from "../types";
 
-interface Props { courses: Course[]; groups: Group[]; formats: Format[]; presetCourse?: string; presetGroup?: string; callPhone?: string; telegram?: string }
+interface Props { courses: Course[]; groups: Group[]; formats: Format[]; presetCourse?: string; presetGroup?: string; callPhone?: string; telegram?: string; name: string }
 type Status = "idle" | "sending" | "success" | "error";
 
 // Telefon: foydalanuvchi faqat 9 ta raqam kiritadi (+998 oldindan yozilgan).
@@ -20,7 +20,7 @@ const fmtPhone = (d: string) =>
 
 const field = "w-full rounded-xl border border-slate-300 bg-white px-4 py-3 outline-none transition focus:border-brand-600 focus:ring-4 focus:ring-brand-600/15 disabled:bg-slate-50 disabled:text-slate-400";
 
-export default function ApplyForm({ courses, groups, formats, presetCourse = "", presetGroup = "", callPhone, telegram }: Props) {
+export default function ApplyForm({ courses, groups, formats, presetCourse = "", presetGroup = "", callPhone, telegram, name }: Props) {
   const [fullName, setFullName] = useState("");
   const [phone, setPhone] = useState("");
   const [courseId, setCourseId] = useState(presetCourse);
@@ -70,7 +70,7 @@ export default function ApplyForm({ courses, groups, formats, presetCourse = "",
   }
 
   return (
-    <Section id="apply" title="Kursga yozilish" eyebrow="Ariza" tone="dark" prev="light" wave="tilt" backdrop={7} subtitle="Ma'lumotlaringizni qoldiring — tez orada siz bilan bog'lanamiz.">
+    <Section id="apply" title="Kursga yozilish" eyebrow="Ariza" tone="dark" prev="light" wave="tilt" backdrop={7} subtitle={`Ma'lumotlaringizni qoldiring — ${name} jamoasi tez orada siz bilan bog'lanadi.`}>
       <div className="grid gap-10 lg:grid-cols-[1fr_1.25fr] lg:items-start">
         {/* Chap: nega hoziroq yozilish kerak + tezkor aloqa */}
         <div data-reveal="left" className="space-y-7">
@@ -106,7 +106,7 @@ export default function ApplyForm({ courses, groups, formats, presetCourse = "",
               <path className="check-mark" d="M15 27l8 8 14-16" fill="none" stroke="#4f8a3c" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
             <p className="mt-5 text-2xl font-extrabold">Arizangiz qabul qilindi!</p>
-            <p className="mt-2 text-slate-600">Arizangiz muvaffaqiyatli yuborildi. Tez orada siz bilan bog'lanamiz.</p>
+            <p className="mt-2 text-slate-600">Arizangiz muvaffaqiyatli yuborildi. {name} jamoasi tez orada siz bilan bog'lanadi.</p>
           </div>
         ) : (
           <form onSubmit={onSubmit} noValidate data-reveal="right" className="grid gap-5 rounded-3xl bg-white p-6 text-ink shadow-2xl sm:grid-cols-2 sm:p-8">
