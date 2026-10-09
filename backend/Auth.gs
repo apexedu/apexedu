@@ -58,7 +58,7 @@ function adminsLite_() {
   const hit = cache.get(ADMINS_CACHE_KEY);
   if (hit) return JSON.parse(hit);
   const list = readRows_('Admins').map(r => ({ id: String(r.id), login: String(r.login), active: isTrue_(r.active), h: String(r.password_hash).slice(0, 12) }));
-  cache.put(ADMINS_CACHE_KEY, JSON.stringify(list), 60);
+  cache.put(ADMINS_CACHE_KEY, JSON.stringify(list), 300);
   return list;
 }
 
