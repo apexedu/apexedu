@@ -4,7 +4,7 @@ import { Icon } from "./icons";
 import { telHref } from "../lib/contact";
 import type { Faq as FaqItem } from "../types";
 
-export default function Faq({ items, phone }: { items: FaqItem[]; phone?: string }) {
+export default function Faq({ items, phone, name }: { items: FaqItem[]; phone?: string; name: string }) {
   const [open, setOpen] = useState<string | null>(items[0]?.id ?? null);
   return (
     <Section id="faq" title="Ko'p so'raladigan savollar" eyebrow="Savol-javob" tone="light" prev="tint" wave="curve" backdrop={6}>
@@ -40,7 +40,7 @@ export default function Faq({ items, phone }: { items: FaqItem[]; phone?: string
           <span className="pointer-events-none absolute -right-8 -top-8 h-32 w-32 rounded-full bg-white/10" aria-hidden="true" />
           <span className="relative flex h-14 w-14 items-center justify-center rounded-2xl bg-saffron text-brand-900"><Icon name="chat" className="h-7 w-7" /></span>
           <h3 className="relative mt-5 text-2xl font-extrabold">Savolingiz qoldimi?</h3>
-          <p className="relative mt-2 text-white/75">Biz bilan bog'laning — barcha savollarga bepul javob beramiz.</p>
+          <p className="relative mt-2 text-white/75"><strong className="text-white">{name}</strong> jamoasi bilan bog'laning — barcha savollarga bepul javob beramiz.</p>
           <div className="relative mt-6 grid gap-3">
             {phone && (
               <a href={telHref(phone)} className="btn-shine flex items-center justify-center gap-2 rounded-xl bg-saffron py-3.5 font-extrabold text-brand-900"><Icon name="phone" className="h-5 w-5" /> Qo'ng'iroq qilish</a>
