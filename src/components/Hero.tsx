@@ -1,14 +1,15 @@
 import { useEffect, useState } from "react";
-import type { Course, Group, Settings } from "../types";
+import type { Group, HeroCard, Settings } from "../types";
 
-interface Props { settings: Settings; courses: Course[]; groups: Group[] }
+interface Props { settings: Settings; heroCards: HeroCard[]; groups: Group[] }
 
 const MAX_SHOWN = 5;
 
-export default function Hero({ settings, courses, groups }: Props) {
-  const slides = courses
-    .map((c) => ({ course: c, groups: groups.filter((g) => g.courseId === c.id) }))
-    .filter((s) => s.groups.length > 0);
+export default function Hero({ settings, heroCards, groups }: Props) {
+  // Slaydlar admin paneldagi "Bosh sahifa kartasi" (HeroCards) dan keladi; guruhlar kursdan avtomatik olinadi
+  const slides = heroCards
+    .map((h) => ({ id: h.id, title: h.title, groups: groups.filter((g) => g.courseId === h.courseId) }))
+    .filter((x) => x.groups.length > 0);
   const [i, setI] = useState(0);
   const [paused, setPaused] = useState(false);
 
@@ -47,8 +48,8 @@ export default function Hero({ settings, courses, groups }: Props) {
             onMouseLeave={() => setPaused(false)}
             style={{ minHeight: tallest * 60 + 110 }}
           >
-            <div key={current.course.id} className="animate-fade-up">
-              <p className="text-sm text-white/70">{current.course.name}: daraja yo'li</p>
+            <div key={current.id} className="animate-fade-up">
+              <p className="text-sm text-white/70">{current.title}</p>
               <ol className="mt-4 space-y-3">
                 {current.groups.slice(0, MAX_SHOWN).map((g, idx) => (
                   <li key={g.id} className="flex items-center gap-4 rounded-xl bg-white/10 px-4 py-3">
@@ -65,10 +66,10 @@ export default function Hero({ settings, courses, groups }: Props) {
               <div className="mt-5 flex gap-2" role="tablist" aria-label="Kurslar">
                 {slides.map((s, idx) => (
                   <button
-                    key={s.course.id}
+                    key={s.id}
                     role="tab"
                     aria-selected={idx === i}
-                    aria-label={s.course.name}
+                    aria-label={s.title}
                     onClick={() => setI(idx)}
                     className={`h-2 rounded-full transition-all ${idx === i ? "w-6 bg-white" : "w-2 bg-white/40"}`}
                   />
