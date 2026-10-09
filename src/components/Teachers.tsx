@@ -31,12 +31,12 @@ function Avatar({ t }: { t: Teacher }) {
         loading="lazy"
         referrerPolicy="no-referrer"
         onError={() => setFailed(true)}
-        className="mx-auto h-32 w-32 rounded-full border-4 border-white object-cover shadow-lg"
+        className="mx-auto h-28 w-28 rounded-full border-4 sm:h-32 sm:w-32 border-white object-cover shadow-lg"
       />
     );
   }
   return (
-    <div className="mx-auto flex h-32 w-32 items-center justify-center rounded-full border-4 border-white bg-gradient-to-br from-brand-600 to-sky text-4xl font-extrabold text-white shadow-lg" aria-hidden="true">
+    <div className="mx-auto flex h-28 w-28 items-center justify-center rounded-full border-4 border-white bg-gradient-to-br from-brand-600 to-sky text-3xl sm:h-32 sm:w-32 sm:text-4xl font-extrabold text-white shadow-lg" aria-hidden="true">
       {initials(t.fullName)}
     </div>
   );
@@ -66,7 +66,7 @@ export default function Teachers({ teachers, name }: { teachers: Teacher[]; name
   }, [n, paused]);
 
   const go = (d: number) => setActive((a) => (a + d + n) % n);
-  const cardW = Math.min(320, w * 0.78);
+  const cardW = Math.min(320, w * 0.74);
   const step = cardW * 0.82;
   const half = Math.floor(n / 2);
 
@@ -74,7 +74,7 @@ export default function Teachers({ teachers, name }: { teachers: Teacher[]; name
     <Section id="teachers" title="O'qituvchilar" eyebrow="Jamoa" tone="light" prev="tint" wave="curve" backdrop={5} subtitle={`${name} ustozlari — har bir talabaga e'tibor beradigan tajribali mutaxassislar.`}>
       <div
         ref={box}
-        data-reveal className="relative h-[27rem] overflow-hidden"
+        data-reveal className="relative h-[25rem] touch-pan-y overflow-hidden sm:h-[27rem]"
         onMouseEnter={() => setPaused(true)}
         onMouseLeave={() => setPaused(false)}
         onTouchStart={(e) => { touchX.current = e.touches[0].clientX; setPaused(true); }}
@@ -96,7 +96,7 @@ export default function Teachers({ teachers, name }: { teachers: Teacher[]; name
               key={t.id}
               aria-hidden={!isActive}
               onClick={() => abs === 1 && setActive(i)}
-              className={`absolute left-1/2 top-1/2 overflow-hidden rounded-3xl border bg-white p-6 text-center transition-all duration-700 ease-out ${isActive ? "border-brand-600/30 shadow-2xl" : "border-slate-200 shadow-sm"} ${abs === 1 ? "cursor-pointer" : ""}`}
+              className={`absolute left-1/2 top-1/2 overflow-hidden rounded-3xl border bg-white p-5 text-center transition-all sm:p-6 duration-700 ease-out ${isActive ? "border-brand-600/30 shadow-2xl" : "border-slate-200 shadow-sm"} ${abs === 1 ? "cursor-pointer" : ""}`}
               style={{
                 width: cardW,
                 transform: `translate(-50%, -50%) translateX(${d * step}px) scale(${isActive ? 1 : 0.78})`,
@@ -107,15 +107,15 @@ export default function Teachers({ teachers, name }: { teachers: Teacher[]; name
             >
               <span className={`absolute inset-x-0 top-0 h-24 bg-gradient-to-br from-brand-900 to-brand-600 `} aria-hidden="true" />
               <div className="relative pt-2"><Avatar t={t} /></div>
-              <h3 className="mt-4 text-xl font-extrabold">{t.fullName}</h3>
+              <h3 className="mt-3 text-lg font-extrabold sm:mt-4 sm:text-xl">{t.fullName}</h3>
               <p className="mt-1 inline-block rounded-full bg-brand-50 px-3 py-1 text-sm font-bold text-brand-600">{t.position}</p>
-              <p className="mt-3 text-sm text-slate-600">{t.bio}</p>
+              <p className="mt-3 text-[0.85rem] leading-snug text-slate-600 sm:text-sm">{t.bio}</p>
             </article>
           );
         })}
       </div>
       {n > 1 && (
-        <div className="mt-6 flex items-center justify-center gap-4">
+        <div className="mt-4 flex items-center justify-center gap-4 sm:mt-6">
           <button onClick={() => go(-1)} className="flex h-11 w-11 items-center justify-center rounded-full border border-slate-300 bg-white transition hover:border-brand-600 hover:bg-brand-600 hover:text-white" aria-label="Oldingi o'qituvchi"><Icon name="chevleft" className="h-5 w-5" /></button>
           <div className="flex gap-2" aria-hidden="true">
             {teachers.map((t, i) => (
