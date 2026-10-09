@@ -1,6 +1,15 @@
 /* ===== Faqat OMMAVIY sayt uchun (admin panel bu faylni ulamaydi) ===== */
 
-html { overflow-x: clip; }
+html { overflow-x: clip; scroll-padding-top: 72px; }
+
+/* Bo'limga o'tganda to'lqin va yuqoridagi bo'sh joy ko'rinmasin: sarlavha sarlavha ostida (≈24px) to'xtaydi.
+   Qiymatlar Section'dagi pt-* (padding-top) dan 1.5rem kam. */
+.sec-w { scroll-margin-top: -5.5rem; }
+.sec-n { scroll-margin-top: -3.5rem; }
+@media (min-width: 640px) {
+  .sec-w { scroll-margin-top: -7.5rem; }
+  .sec-n { scroll-margin-top: -5.5rem; }
+}
 body.site { background: #fff; }
 
 /* ---------- Scroll reveal ---------- */
