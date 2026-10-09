@@ -5,7 +5,7 @@ const cut = (s: unknown, n = 70) => { const t = String(s ?? ""); return t.length
 const base = { activeKey: "active" as const, activeLabel: "Saytda ko'rinadi", ordered: true, canCreate: true };
 
 export const courses: CrudConfig = {
-  ...base, sheet: "Courses", title: "Kurslar", singular: "Kurs",
+  ...base, sheet: "Courses", required: ['name'], title: "Kurslar", singular: "Kurs",
   hint: "Kurs — fan (masalan, Turk tili). Guruhlar alohida bo'limda boshqariladi.",
   columns: [{ key: "name", label: "Nomi" }, { key: "description", label: "Tavsif", render: (r) => cut(r.description) }],
   fields: [
@@ -16,7 +16,7 @@ export const courses: CrudConfig = {
 };
 
 export const groups: CrudConfig = {
-  ...base, sheet: "Groups", title: "Guruhlar", singular: "Guruh",
+  ...base, sheet: "Groups", required: ['course_id', 'name'], title: "Guruhlar", singular: "Guruh",
   hint: "Guruh — kurs ichidagi daraja yoki dastur (masalan, A1–A2).",
   columns: [
     { key: "course_id", label: "Kurs", render: (r, refs) => refs.Courses?.find((c) => c.id === r.course_id)?.name ?? "—" },
@@ -33,7 +33,7 @@ export const groups: CrudConfig = {
 };
 
 export const teachers: CrudConfig = {
-  ...base, sheet: "Teachers", title: "O'qituvchilar", singular: "O'qituvchi",
+  ...base, sheet: "Teachers", required: ['full_name'], title: "O'qituvchilar", singular: "O'qituvchi",
   hint: "Rasm brauzerda avtomatik siqiladi va Google Drive'ga yuklanadi.",
   columns: [
     { key: "photo_url", label: "Rasm", render: (r) => r.photo_url ? <img src={photoPreview(r.photo_url)} alt="" referrerPolicy="no-referrer" className="h-10 w-10 rounded-full bg-slate-100 object-cover" /> : <span className="text-slate-400">—</span> },
@@ -50,7 +50,7 @@ export const teachers: CrudConfig = {
 };
 
 export const formats: CrudConfig = {
-  ...base, sheet: "Formats", title: "Ta'lim formatlari", singular: "Format",
+  ...base, sheet: "Formats", required: ['name'], title: "Ta'lim formatlari", singular: "Format",
   columns: [{ key: "name", label: "Nomi" }, { key: "description", label: "Tavsif", render: (r) => cut(r.description) }],
   fields: [
     { key: "name", label: "Nomi", type: "text", hint: "Masalan: Offline, Online" },
@@ -60,7 +60,7 @@ export const formats: CrudConfig = {
 };
 
 export const advantages: CrudConfig = {
-  ...base, sheet: "Advantages", title: "Nega ApexEdu (afzalliklar)", singular: "Afzallik",
+  ...base, sheet: "Advantages", required: ['title'], title: "Nega ApexEdu (afzalliklar)", singular: "Afzallik",
   columns: [{ key: "title", label: "Sarlavha" }, { key: "text", label: "Matn", render: (r) => cut(r.text) }],
   fields: [
     { key: "title", label: "Sarlavha", type: "text" },
@@ -70,7 +70,7 @@ export const advantages: CrudConfig = {
 };
 
 export const testimonials: CrudConfig = {
-  ...base, sheet: "Testimonials", title: "Talabalar natijalari", singular: "Natija",
+  ...base, sheet: "Testimonials", required: ['name', 'text'], title: "Talabalar natijalari", singular: "Natija",
   columns: [{ key: "name", label: "Ism" }, { key: "result", label: "Natija" }, { key: "text", label: "Matn", render: (r) => cut(r.text, 50) }],
   fields: [
     { key: "name", label: "Ism", type: "text" },
@@ -81,7 +81,7 @@ export const testimonials: CrudConfig = {
 };
 
 export const faq: CrudConfig = {
-  ...base, sheet: "FAQ", title: "Ko'p so'raladigan savollar", singular: "Savol",
+  ...base, sheet: "FAQ", required: ['question', 'answer'], title: "Ko'p so'raladigan savollar", singular: "Savol",
   columns: [{ key: "question", label: "Savol" }, { key: "answer", label: "Javob", render: (r) => cut(r.answer, 60) }],
   fields: [
     { key: "question", label: "Savol", type: "text" },
@@ -91,7 +91,7 @@ export const faq: CrudConfig = {
 };
 
 export const heroCards: CrudConfig = {
-  ...base, sheet: "HeroCards", title: "Bosh sahifa kartasi", singular: "Slayd",
+  ...base, sheet: "HeroCards", required: ['title', 'course_id'], title: "Bosh sahifa kartasi", singular: "Slayd",
   hint: "Bosh sahifadagi \"daraja yo'li\" kartasi: har bir slayd tanlangan kursning faol guruhlarini avtomatik ko'rsatadi. Slaydlar navbat bilan almashadi.",
   columns: [
     { key: "title", label: "Sarlavha" },
@@ -105,7 +105,7 @@ export const heroCards: CrudConfig = {
 };
 
 export const reviews: CrudConfig = {
-  sheet: "Reviews", title: "Fikrlar", singular: "Fikr", activeKey: "approved", activeLabel: "Saytda ko'rinadi (tasdiqlangan)",
+  sheet: "Reviews", required: ['name', 'text'], title: "Fikrlar", singular: "Fikr", activeKey: "approved", activeLabel: "Saytda ko'rinadi (tasdiqlangan)",
   hint: "Saytdan kelgan fikrlar avval tasdiqlanmagan holda tushadi. Faqat tasdiqlanganlari saytda ko'rinadi.",
   ordered: false, canCreate: false,
   columns: [
