@@ -51,12 +51,12 @@ export default function Header({ name, phone }: { name: string; phone?: string }
   return (
     <header className={`sticky top-0 z-40 transition-all duration-300 ${scrolled ? "bg-white/90 shadow-[0_8px_30px_-12px_rgba(7,50,63,0.35)] backdrop-blur-xl" : "bg-white"}`}>
       <span ref={bar} className="absolute inset-x-0 top-0 h-[3px] origin-left scale-x-0 bg-gradient-to-r from-saffron via-sky to-leaf" aria-hidden="true" />
-      <div className={`mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 transition-all duration-300 sm:px-6 ${scrolled ? "h-16 sm:h-[4.5rem]" : "h-20 sm:h-[5.5rem]"}`}>
+      <div className={`mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 transition-all duration-300 sm:gap-4 sm:px-6 ${scrolled ? "h-14 sm:h-[4.5rem]" : "h-16 sm:h-[5.5rem]"}`}>
         <a href="#top" aria-label={name} className="flex shrink-0 items-center gap-1">
-          <Logo name={name} className={`w-auto transition-all duration-300 ${scrolled ? "h-12 sm:h-[4.5rem]" : "h-16 sm:h-[5.5rem]"}`} />
+          <Logo name={name} className={`w-auto transition-all duration-300 ${scrolled ? "h-10 sm:h-[4.5rem]" : "h-12 sm:h-[5.5rem]"}`} />
           <span className="hidden leading-none min-[420px]:block lg:hidden xl:block">
-            <span className="block text-xl font-extrabold tracking-tight text-brand-900 sm:text-2xl">{first}</span>
-            {rest && <span className="mt-0.5 block text-sm font-bold tracking-wide text-leaf sm:text-base">{rest}</span>}
+            <span className="block text-lg font-extrabold tracking-tight text-brand-900 sm:text-2xl">{first}</span>
+            {rest && <span className="mt-0.5 block text-xs font-bold tracking-wide text-leaf sm:text-base">{rest}</span>}
           </span>
         </a>
 
@@ -69,7 +69,7 @@ export default function Header({ name, phone }: { name: string; phone?: string }
           ))}
         </nav>
 
-        <div className="flex items-center gap-2 sm:gap-3">
+        <div className="flex shrink-0 items-center gap-2 sm:gap-3">
           {phone && (
             <a href={telHref(phone)} className="group hidden items-center gap-2.5 whitespace-nowrap rounded-full border border-brand-600/20 bg-brand-50 py-1.5 pl-1.5 pr-4 text-sm font-semibold text-brand-900 transition hover:border-brand-600/50 hover:bg-white md:flex" aria-label={`Qo'ng'iroq qilish: ${phone}`}>
               <span className="relative flex h-8 w-8 items-center justify-center rounded-full bg-brand-600 text-white">
@@ -84,7 +84,7 @@ export default function Header({ name, phone }: { name: string; phone?: string }
             Kursga yozilish
           </a>
           <button
-            className="flex h-11 w-11 items-center justify-center rounded-xl border border-slate-200 text-slate-700 transition hover:bg-brand-50 lg:hidden"
+            className="flex h-11 w-11 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-700 transition active:bg-brand-50 lg:hidden"
             aria-expanded={open}
             aria-controls="mobile-menu"
             aria-label={open ? "Menyuni yopish" : "Menyuni ochish"}
@@ -96,20 +96,20 @@ export default function Header({ name, phone }: { name: string; phone?: string }
       </div>
 
       {open && (
-        <nav id="mobile-menu" className="menu-in border-t border-slate-100 bg-white px-4 pb-5 pt-2 shadow-xl lg:hidden" aria-label="Mobil menyu">
+        <nav id="mobile-menu" className="menu-in max-h-[calc(100dvh-3.5rem)] overflow-y-auto overscroll-contain border-t border-slate-100 bg-white px-4 pb-[max(1.25rem,env(safe-area-inset-bottom))] pt-1 shadow-xl lg:hidden" aria-label="Mobil menyu">
           {links.map((l) => (
-            <a key={l.href} href={l.href} onClick={() => setOpen(false)} className="flex items-center justify-between border-b border-slate-100 py-3.5 font-medium text-slate-700">
+            <a key={l.href} href={l.href} onClick={() => setOpen(false)} className="flex min-h-12 items-center justify-between border-b border-slate-100 py-3 text-base font-medium text-slate-700 active:text-brand-600">
               {l.label}
               <Icon name="right" className="h-4 w-4 text-slate-400" />
             </a>
           ))}
           <div className="mt-4 grid grid-cols-2 gap-3">
             {phone ? (
-              <a href={telHref(phone)} className="flex items-center justify-center gap-2 rounded-xl bg-brand-600 py-3 font-semibold text-white">
+              <a href={telHref(phone)} className="flex min-h-12 items-center justify-center gap-2 rounded-xl bg-brand-600 py-3 font-semibold text-white">
                 <Icon name="phone" className="h-4 w-4" /> Qo'ng'iroq
               </a>
             ) : <span />}
-            <a href="#apply" onClick={() => setOpen(false)} className="flex items-center justify-center rounded-xl bg-saffron py-3 font-bold text-brand-900">Yozilish</a>
+            <a href="#apply" onClick={() => setOpen(false)} className="flex min-h-12 items-center justify-center rounded-xl bg-saffron py-3 font-bold text-brand-900">Yozilish</a>
           </div>
         </nav>
       )}
