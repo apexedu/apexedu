@@ -2,10 +2,10 @@ import EduBackdrop from "./EduBackdrop";
 import { Icon } from "./icons";
 import { telHref } from "../lib/contact";
 
-interface Props { phone?: string; prev?: "light" | "tint"; seed?: number }
+interface Props { name: string; phone?: string; prev?: "light" | "tint"; seed?: number }
 
 // Sahifa o'rtasidagi "undovchi" blok: foydalanuvchi shu yerda qaror qabul qilib qo'ng'iroq qiladi yoki ariza qoldiradi
-export default function CtaBand({ phone, seed = 3 }: Props) {
+export default function CtaBand({ name, phone, seed = 3 }: Props) {
   return (
     <section id="call" className="relative overflow-hidden bg-[linear-gradient(180deg,#07323f_0%,#051a24_100%)] py-20 text-white sm:py-24">
       <div className="pointer-events-none absolute inset-0" aria-hidden="true">
@@ -23,6 +23,7 @@ export default function CtaBand({ phone, seed = 3 }: Props) {
           </span>
         </div>
         <div data-reveal style={{ ["--d" as string]: "120ms" }} className="text-center md:text-left">
+          <p className="mb-3 text-sm font-extrabold uppercase tracking-[0.18em] text-saffron">{name}</p>
           <h2 className="text-3xl font-extrabold leading-tight tracking-tight sm:text-5xl">Qaysi daraja sizga mos? <span className="text-saffron">Bepul aniqlaymiz.</span></h2>
           <p className="mx-auto mt-4 max-w-2xl text-lg text-white/75 md:mx-0">Qisqa suhbat — va siz o'zingizga mos guruhni bilib olasiz. Qo'ng'iroq qiling yoki ariza qoldiring, o'zimiz bog'lanamiz.</p>
           <div className="mt-8 flex flex-col items-stretch gap-3 sm:flex-row sm:justify-center md:justify-start">
