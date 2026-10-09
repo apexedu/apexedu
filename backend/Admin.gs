@@ -32,7 +32,9 @@ function handleAdmin_(b) {
     case 'adminTestTelegram': return sendTelegram_('✅ <b>ApexEdu</b>: test xabari (admin panel)');
     case 'adminIntegration': return adminIntegration_();
     case 'adminEnsureSchema': setup(); return adminIntegration_();
-    case 'adminClearCache': warmCache(); return { ok: true };
+    case 'adminInit': return adminInit_(me);
+    case 'adminWarm': warmCache(); return { ok: true };
+    case 'adminClearCache': clearAdminListCaches_(); warmCache(); return { ok: true };
     case 'adminUploadPhoto': return adminUploadPhoto_(b);
     case 'adminListAdmins': return adminListAdmins_();
     case 'adminCreateAdmin': return adminCreateAdmin_(b);
@@ -85,8 +87,22 @@ function parseField_(type, v, key) {
 }
 
 // ---------- Kontent CRUD ----------
+// Tezlik: ro'yxatlar serverda keshlanadi; yozuvlar (va Sheets'da qo'lda tahrir — onEdit) keshni tozalaydi
+function clearAdminListCaches_() {
+  CacheService.getScriptCache().removeAll(Object.keys(ADMIN_SHEETS).map(s => 'al_' + s));
+}
+// Yozuvdan keyin: faqat kesh tozalanadi (tez). Sayt keshini qayta qurishni frontend fonda so'raydi (adminWarm).
+function invalidate_(sheet) {
+  CacheService.getScriptCache().remove('al_' + sheet);
+  clearPublicCache_();
+}
+
 function adminListSheet_(sheet) {
   const cfg = cfgOf_(sheet);
+  const cache = CacheService.getScriptCache();
+  const key = 'al_' + sheet;
+  const hit = cache.get(key);
+  if (hit) return JSON.parse(hit);
   const rows = readRows_(sheet).map(r => {
     const o = { id: String(r.id) };
     Object.keys(cfg.fields).forEach(k => { o[k] = typedValue_(cfg.fields[k], r[k]); });
@@ -95,7 +111,21 @@ function adminListSheet_(sheet) {
   });
   if (cfg.fields.order) rows.sort((a, b) => a.order - b.order);
   else rows.sort((a, b) => String(b.created_at).localeCompare(String(a.created_at)));
+  try { cache.put(key, JSON.stringify(rows), 21600); } catch (e) { /* kesh to'lsa — e'tibor bermaymiz */ }
   return rows;
+}
+
+// Boshlang'ich yuklash: bitta so'rovda hamma narsa (har sahifa alohida so'rov yubormasligi uchun)
+function adminInit_(me) {
+  const sheets = {};
+  Object.keys(ADMIN_SHEETS).forEach(n => { sheets[n] = adminListSheet_(n); });
+  return {
+    admin: { id: me.id, login: me.login },
+    sheets: sheets,
+    settings: adminGetSettings_(),
+    telegram: adminGetTelegram_(),
+    admins: adminListAdmins_(),
+  };
 }
 
 function adminUpsert_(b) {
@@ -126,7 +156,7 @@ function adminUpsert_(b) {
     sh.appendRow(out);
     return newId;
   });
-  warmCache();
+  invalidate_(b.sheet);
   return { id: id };
 }
 
@@ -137,7 +167,7 @@ function adminDelete_(b) {
     if (used) throw new ValidationError('in_use');
   }
   withLock_(() => deleteRowById_(b.sheet, b.id));
-  warmCache();
+  invalidate_(b.sheet);
   return { ok: true };
 }
 
@@ -155,18 +185,21 @@ function adminReorder_(b) {
     }
     if (data.length > 1) sh.getRange(2, 1, data.length - 1, data[0].length).setValues(data.slice(1));
   });
-  warmCache();
+  invalidate_(b.sheet);
   return { ok: true };
 }
 
 // ---------- Arizalar ----------
+// Ixcham format: {cols, rows:[[...]]} (kalit nomlari takrorlanmaydi), faqat oxirgi 5000 ta, yangisi birinchi
 function adminApplications_() {
-  const rows = readRows_('Applications').map(r => {
-    const o = {};
-    SCHEMA.Applications.forEach(k => { o[k] = String(r[k] == null ? '' : r[k]); });
-    return o;
-  });
-  return rows.reverse().slice(0, 5000);
+  const cols = SCHEMA.Applications;
+  const sh = ss_().getSheetByName('Applications');
+  const last = sh.getLastRow();
+  if (last < 2) return { cols: cols, rows: [] };
+  const start = Math.max(2, last - 4999);
+  const vals = sh.getRange(start, 1, last - start + 1, cols.length).getValues();
+  const rows = vals.filter(r => String(r[0]) !== '').map(r => r.map(v => String(v == null ? '' : v)));
+  return { cols: cols, rows: rows.reverse() };
 }
 
 // ---------- Umumiy sozlamalar ----------
@@ -209,7 +242,7 @@ function adminSaveSettings_(b) {
       else sh.getRange(i + 1, 2).setValue(toWrite[k]);
     });
   });
-  warmCache();
+  clearPublicCache_(); // sayt keshini frontend alohida (fonda) yangilaydi: adminWarm
   return { saved: Object.keys(toWrite) };
 }
 
