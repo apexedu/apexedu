@@ -12,6 +12,9 @@ export const mockSiteData: SiteData = {
     address: "Toshkent shahri, manzil keyinroq kiritiladi",
     workingHours: "Dushanba–Shanba, 09:00–19:00",
     mapUrl: "https://www.google.com/maps/search/?api=1&query=Tashkent",
+    instagram: "",
+    facebook: "",
+    youtube: "",
     stats: [
       { value: "500+", label: "bitiruvchi" },
       { value: "5 yil", label: "tajriba" },
@@ -21,6 +24,10 @@ export const mockSiteData: SiteData = {
   courses: [
     { id: "c1", name: "Turk tili", description: "Noldan CEFR sertifikatigacha: grammatika, nutq va imtihonga tayyorgarlik." },
     { id: "c2", name: "Ingliz tili", description: "Umumiy ingliz tili va suhbat amaliyoti." },
+  ],
+  heroCards: [
+    { id: "h1", title: "Turk tili: daraja yo'li", courseId: "c1" },
+    { id: "h2", title: "Ingliz tili: daraja yo'li", courseId: "c2" },
   ],
   groups: [
     { id: "g1", courseId: "c1", name: "A1–A2", description: "Boshlang'ich daraja: asosiy grammatika va kundalik iboralar.", schedule: "Haftada 3 marta, 90 daqiqa" },
