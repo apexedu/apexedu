@@ -4,16 +4,16 @@ import { Icon } from "./icons";
 import { telHref } from "../lib/contact";
 import type { Faq as FaqItem } from "../types";
 
-export default function Faq({ items, phone, name }: { items: FaqItem[]; phone?: string; name: string }) {
+export default function Faq({ items, phone, name, prev = "tint" }: { items: FaqItem[]; phone?: string; name: string; prev?: "tint" | "dark" }) {
   const [open, setOpen] = useState<string | null>(items[0]?.id ?? null);
   return (
-    <Section id="faq" title="Ko'p so'raladigan savollar" eyebrow="Savol-javob" tone="light" prev="tint" wave="curve" backdrop={6}>
+    <Section id="faq" title="Ko'p so'raladigan savollar" eyebrow="Savol-javob" tone="light" prev={prev} wave="curve" backdrop={6}>
       <div className="grid gap-7 sm:gap-10 lg:grid-cols-[1.6fr_1fr] lg:items-start">
-        <div className="space-y-2.5 sm:space-y-3" data-reveal>
+        <div className="max-sm:divide-y max-sm:divide-slate-100 max-sm:overflow-hidden max-sm:rounded-2xl max-sm:border max-sm:border-slate-200 max-sm:bg-white sm:space-y-3" data-reveal>
           {items.map((q) => {
             const isOpen = open === q.id;
             return (
-              <div key={q.id} className={`overflow-hidden rounded-2xl border transition-all duration-300 ${isOpen ? "border-brand-600/40 bg-white shadow-lg" : "border-slate-200 bg-white/80 hover:border-brand-600/30"}`}>
+              <div key={q.id} className={`overflow-hidden transition-all duration-300 max-sm:bg-white sm:rounded-2xl sm:border ${isOpen ? "sm:border-brand-600/40 sm:bg-white sm:shadow-lg" : "sm:border-slate-200 sm:bg-white/80 sm:hover:border-brand-600/30"}`}>
                 <h3>
                   <button
                     type="button"
