@@ -7,7 +7,6 @@ const links = [
   { href: "#about", label: "Biz haqimizda" },
   { href: "#courses", label: "Kurslar" },
   { href: "#teachers", label: "O'qituvchilar" },
-  { href: "#reviews", label: "Fikrlar" },
   { href: "#faq", label: "Savollar" },
   { href: "#contact", label: "Aloqa" },
 ];
@@ -49,11 +48,11 @@ export default function Header({ name, phone }: { name: string; phone?: string }
   }, []);
 
   return (
-    <header className={`sticky top-0 z-40 transition-all duration-300 ${scrolled ? "bg-white/90 shadow-[0_8px_30px_-12px_rgba(7,50,63,0.35)] backdrop-blur-xl" : "bg-white"}`}>
+    <header className={`sticky top-0 z-40 transition-all duration-300 ${scrolled ? "bg-white/90 shadow-[0_8px_30px_-12px_rgba(7,50,63,0.35)] backdrop-blur-xl" : "bg-white max-sm:border-b max-sm:border-slate-100"}`}>
       <span ref={bar} className="absolute inset-x-0 top-0 h-[3px] origin-left scale-x-0 bg-gradient-to-r from-saffron via-sky to-leaf" aria-hidden="true" />
-      <div className={`mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 transition-all duration-300 sm:gap-4 sm:px-6 ${scrolled ? "h-14 sm:h-[4.5rem]" : "h-16 sm:h-[5.5rem]"}`}>
+      <div className={`mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 transition-all duration-300 sm:gap-4 sm:px-6 ${scrolled ? "h-14 sm:h-[4.5rem]" : "h-14 sm:h-[5.5rem]"}`}>
         <a href="#top" aria-label={name} className="flex shrink-0 items-center gap-1">
-          <Logo name={name} className={`w-auto transition-all duration-300 ${scrolled ? "h-10 sm:h-[4.5rem]" : "h-12 sm:h-[5.5rem]"}`} />
+          <Logo name={name} className={`w-auto transition-all duration-300 ${scrolled ? "h-10 sm:h-[4.5rem]" : "h-10 sm:h-[5.5rem]"}`} />
           <span className="hidden leading-none min-[420px]:block lg:hidden xl:block">
             <span className="block text-lg font-extrabold tracking-tight text-brand-900 sm:text-2xl">{first}</span>
             {rest && <span className="mt-0.5 block text-xs font-bold tracking-wide text-leaf sm:text-base">{rest}</span>}
@@ -80,11 +79,16 @@ export default function Header({ name, phone }: { name: string; phone?: string }
               <span className="xl:hidden">Qo'ng'iroq</span>
             </a>
           )}
+          {phone && (
+            <a href={telHref(phone)} aria-label={`Qo'ng'iroq qilish: ${phone}`} className="press flex h-10 w-10 items-center justify-center rounded-full bg-brand-600 text-white shadow-sm sm:hidden">
+              <Icon name="phone" className="ringing h-[1.1rem] w-[1.1rem]" />
+            </a>
+          )}
           <a href="#apply" className="btn-shine hidden whitespace-nowrap rounded-full bg-saffron px-5 py-2.5 text-sm font-bold text-brand-900 shadow-sm transition hover:brightness-105 sm:inline-flex">
             Kursga yozilish
           </a>
           <button
-            className="flex h-11 w-11 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-700 transition active:bg-brand-50 lg:hidden"
+            className="press flex h-10 w-10 items-center justify-center rounded-full bg-slate-100 text-slate-700 transition active:bg-brand-50 sm:h-11 sm:w-11 sm:rounded-xl sm:border sm:border-slate-200 sm:bg-white lg:hidden"
             aria-expanded={open}
             aria-controls="mobile-menu"
             aria-label={open ? "Menyuni yopish" : "Menyuni ochish"}
@@ -96,7 +100,7 @@ export default function Header({ name, phone }: { name: string; phone?: string }
       </div>
 
       {open && (
-        <nav id="mobile-menu" className="menu-in max-h-[calc(100dvh-3.5rem)] overflow-y-auto overscroll-contain border-t border-slate-100 bg-white px-4 pb-[max(1.25rem,env(safe-area-inset-bottom))] pt-1 shadow-xl lg:hidden" aria-label="Mobil menyu">
+        <nav id="mobile-menu" className="menu-in max-h-[calc(100dvh-3.5rem)] overflow-y-auto overscroll-contain border-t border-slate-100 bg-white px-4 pb-[max(1.25rem,env(safe-area-inset-bottom))] pt-1 shadow-xl max-sm:rounded-b-3xl lg:hidden" aria-label="Mobil menyu">
           {links.map((l) => (
             <a key={l.href} href={l.href} onClick={() => setOpen(false)} className="flex min-h-12 items-center justify-between border-b border-slate-100 py-3 text-base font-medium text-slate-700 active:text-brand-600">
               {l.label}
