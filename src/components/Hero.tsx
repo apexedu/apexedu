@@ -12,10 +12,15 @@ const MAX_SHOWN = 5;
 function Stat({ value, label, go }: { value: string; label: string; go: boolean }) {
   const v = useCountUp(value, go);
   return (
-    <div className="rounded-2xl border border-white/15 bg-white/[0.07] px-3 py-2.5 backdrop-blur-sm sm:px-5 sm:py-3">
+    // Karta kengligi matnga (raqam va yozuvga) qarab moslashadi; raqam sanalayotganda o'lcham sakramasligi uchun
+    // oxirgi qiymat ko'rinmas holda joy egallab turadi.
+    <div className="w-fit max-w-full rounded-2xl border border-white/15 bg-white/[0.07] px-3.5 py-2.5 backdrop-blur-sm sm:px-5 sm:py-3">
       <dt className="sr-only">{label}</dt>
-      <dd className="text-xl font-extrabold tabular-nums sm:text-3xl">{v}</dd>
-      <p className="mt-0.5 text-[0.7rem] leading-tight text-white/70 sm:text-sm" aria-hidden="true">{label}</p>
+      <dd className="grid text-xl font-extrabold tabular-nums sm:text-3xl">
+        <span className="invisible col-start-1 row-start-1" aria-hidden="true">{value}</span>
+        <span className="col-start-1 row-start-1">{v}</span>
+      </dd>
+      <p className="mt-0.5 break-words text-[0.7rem] leading-tight text-white/70 sm:text-sm" aria-hidden="true">{label}</p>
     </div>
   );
 }
@@ -53,7 +58,7 @@ export default function Hero({ settings, heroCards, groups, phone }: Props) {
   const head = words.join(" ");
 
   return (
-    <section id="top" className="relative isolate overflow-hidden bg-[linear-gradient(135deg,#051a24_0%,#07323f_45%,#0b5d7a_100%)] pb-20 text-white sm:pb-36">
+    <section id="top" className="relative isolate overflow-hidden bg-[linear-gradient(135deg,#051a24_0%,#07323f_45%,#0b5d7a_100%)] pb-8 text-white max-sm:rounded-b-[2rem] sm:pb-36">
       {/* Fon: aurora + chiziqli to'r + ta'limga oid suzuvchi belgilar */}
       <div className="pointer-events-none absolute inset-0 -z-10" aria-hidden="true">
         <div className="aurora aurora-a -left-40 -top-40 h-[34rem] w-[34rem]" />
@@ -93,7 +98,7 @@ export default function Hero({ settings, heroCards, groups, phone }: Props) {
               <Icon name="arrow" className="h-5 w-5 transition-transform group-hover:translate-x-1" />
             </a>
             {phone ? (
-              <a href={telHref(phone)} className="group inline-flex items-center justify-center gap-3 rounded-2xl border-2 border-white/30 bg-white/5 px-5 py-2.5 text-base font-bold backdrop-blur sm:px-6 sm:py-3.5 sm:text-lg transition hover:border-white hover:bg-white hover:text-brand-900">
+              <a href={telHref(phone)} className="group hidden items-center justify-center gap-3 rounded-2xl border-2 border-white/30 bg-white/5 px-5 py-2.5 text-base font-bold backdrop-blur sm:inline-flex sm:px-6 sm:py-3.5 sm:text-lg transition hover:border-white hover:bg-white hover:text-brand-900">
                 <span className="relative flex h-9 w-9 items-center justify-center rounded-full bg-white text-brand-600">
                   <span className="pulse-ring text-white" />
                   <Icon name="phone" className="ringing h-4.5 w-4.5" />
@@ -108,7 +113,23 @@ export default function Hero({ settings, heroCards, groups, phone }: Props) {
             )}
           </div>
 
-          <dl ref={statsRef} data-reveal style={{ ["--d" as string]: "420ms" }} className="mt-8 grid max-w-md grid-cols-3 gap-2.5 sm:mt-10 sm:gap-3">
+          {/* Telefon: tezkor amallar (ilovalardagi kabi) */}
+          <div data-reveal style={{ ["--d" as string]: "340ms" }} className="mt-4 flex gap-2.5 sm:hidden">
+            {phone && <a href={telHref(phone)} className="press flex flex-1 flex-col items-center gap-1.5 rounded-2xl border border-white/15 bg-white/10 py-3 text-xs font-semibold backdrop-blur">
+                <span className="flex h-10 w-10 items-center justify-center rounded-full bg-white text-brand-600"><Icon name="phone" className="h-5 w-5" /></span>
+                Qo'ng'iroq
+              </a>}
+            {settings.telegram && <a href={`https://t.me/${settings.telegram}`} target="_blank" rel="noreferrer" className="press flex flex-1 flex-col items-center gap-1.5 rounded-2xl border border-white/15 bg-white/10 py-3 text-xs font-semibold backdrop-blur">
+                <span className="flex h-10 w-10 items-center justify-center rounded-full bg-white text-brand-600"><Icon name="send" className="h-5 w-5" /></span>
+                Telegram
+              </a>}
+            {settings.mapUrl && <a href={settings.mapUrl} target="_blank" rel="noreferrer" className="press flex flex-1 flex-col items-center gap-1.5 rounded-2xl border border-white/15 bg-white/10 py-3 text-xs font-semibold backdrop-blur">
+                <span className="flex h-10 w-10 items-center justify-center rounded-full bg-white text-brand-600"><Icon name="pin" className="h-5 w-5" /></span>
+                Manzil
+              </a>}
+          </div>
+
+          <dl ref={statsRef} data-reveal style={{ ["--d" as string]: "420ms" }} className="mt-7 flex flex-wrap gap-2.5 sm:mt-10 sm:gap-3">
             {settings.stats.map((s) => <Stat key={s.label} value={s.value} label={s.label} go={statsOn} />)}
           </dl>
         </div>
