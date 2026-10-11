@@ -109,7 +109,7 @@ export default function ApplyForm({ courses, groups, formats, presetCourse = "",
             <p className="mt-2 text-slate-600">Arizangiz muvaffaqiyatli yuborildi. {name} jamoasi tez orada siz bilan bog'lanadi.</p>
           </div>
         ) : (
-          <form onSubmit={onSubmit} noValidate data-reveal="right" className="grid gap-4 rounded-3xl bg-white p-5 text-ink shadow-2xl sm:grid-cols-2 sm:gap-5 sm:p-8">
+          <form onSubmit={onSubmit} noValidate data-reveal="right" className="grid gap-4 rounded-2xl bg-white p-4 text-ink shadow-2xl sm:grid-cols-2 sm:gap-5 sm:rounded-3xl sm:p-8">
             <Field label="Ism va familiya" error={errors.fullName}>
               <input className={field} value={fullName} onChange={(e) => setFullName(e.target.value)} autoComplete="name" />
             </Field>
