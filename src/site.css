@@ -162,3 +162,14 @@ body.site { background: #fff; }
   /* Tugmalar bosish uchun yetarlicha katta (>=44px) */
   .tap { min-height: 44px; }
 }
+
+/* ---------- Telefon: ilova uslubi ---------- */
+@media (max-width: 639px) {
+  body.site { background: #eef3f6; }
+  /* Bo'limlar orasida katta bo'sh joy va to'lqinlar yo'q — yuqori panel balandligi (56px) hisobga olinadi */
+  .sec-w, .sec-n { scroll-margin-top: 0; }
+  html { scroll-padding-top: 64px; }
+}
+/* Bosilganda yengil "bosilish" effekti (barmoq bilan ishlaganda ilovadek seziladi) */
+.press { transition: transform 0.15s ease, background-color 0.2s ease; }
+.press:active, .btn-shine:active { transform: scale(0.97); }
