@@ -19,6 +19,10 @@ import FloatingCta from "./components/FloatingCta";
 import { useRevealAll } from "./hooks/useReveal";
 import { pickPhone } from "./lib/contact";
 
+// Mijoz talabi: "Fikrlar" bo'limi hozircha saytda ko'rinmaydi. Qayta yoqish uchun true qiling
+// (admin panel va backend o'zgarmagan, shuning uchun hammasi avvalgidek ishlaydi).
+const SHOW_REVIEWS = false;
+
 export default function App() {
   const { data, loading, error, retry } = useSiteData();
   const [preset, setPreset] = useState({ courseId: "", groupId: "", n: 0 });
@@ -57,8 +61,8 @@ export default function App() {
         <Formats formats={data.formats} />
         <Teachers teachers={data.teachers} name={data.settings.academyName} />
         <Testimonials items={data.testimonials} />
-        <Reviews reviews={data.reviews} />
-        <Faq items={data.faqs} phone={phone} name={data.settings.academyName} />
+        {SHOW_REVIEWS && <Reviews reviews={data.reviews} />}
+        <Faq prev={SHOW_REVIEWS ? "tint" : "dark"} items={data.faqs} phone={phone} name={data.settings.academyName} />
         <ApplyForm key={preset.n} courses={data.courses} groups={data.groups} formats={data.formats} presetCourse={preset.courseId} presetGroup={preset.groupId} callPhone={phone} telegram={data.settings.telegram} name={data.settings.academyName} />
         <Contact settings={data.settings} />
       </main>
