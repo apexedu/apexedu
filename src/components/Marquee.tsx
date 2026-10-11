@@ -14,7 +14,7 @@ export default function Marquee({ name }: { name: string }) {
     </div>
   );
   return (
-    <div className="relative z-10 -mt-7 mb-[-1.75rem] sm:-mt-9 sm:mb-[-2.25rem]" aria-hidden="true">
+    <div className="relative z-10 -mt-7 mb-[-1.75rem] max-sm:hidden sm:-mt-9 sm:mb-[-2.25rem]" aria-hidden="true">
       <div className="marquee -rotate-[1.4deg] scale-x-[1.04] overflow-hidden bg-saffron py-3 shadow-[0_10px_30px_-10px_rgba(0,0,0,0.35)] sm:py-4">
         <div className="marquee-track">{row("a")}{row("b")}</div>
       </div>
