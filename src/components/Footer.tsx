@@ -12,7 +12,7 @@ const links = [
 
 export default function Footer({ name, phone }: { name: string; phone?: string }) {
   return (
-    <footer className="relative overflow-hidden bg-night pb-28 pt-10 text-sm text-white/70 sm:pt-14 md:pb-10">
+    <footer className="relative overflow-hidden bg-night pb-28 pt-10 max-sm:mt-3 max-sm:rounded-t-3xl text-sm text-white/70 sm:pt-14 md:pb-10">
       <div className="pointer-events-none absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-saffron via-sky to-leaf" aria-hidden="true" />
       <p className="pointer-events-none absolute inset-x-0 bottom-10 select-none whitespace-nowrap text-center text-[18vw] font-extrabold leading-none tracking-tighter text-white/[0.04] md:bottom-4" aria-hidden="true">{name}</p>
       <div className="relative mx-auto max-w-6xl px-4 sm:px-6">
