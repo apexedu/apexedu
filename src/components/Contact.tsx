@@ -6,12 +6,14 @@ import type { Settings } from "../types";
 function Card({ icon, title, children, i }: { icon: IconName; title: string; children: React.ReactNode; i: number }) {
   return (
     <div data-reveal style={{ ["--d" as string]: `${i * 90}ms` }}>
-      <div className="hover-lift group h-full rounded-2xl border border-slate-200 bg-white p-4 shadow-sm hover:border-brand-600/30 hover:shadow-2xl sm:rounded-3xl sm:p-6">
-        <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-brand-50 text-brand-600 transition-all duration-500 sm:h-12 sm:w-12 sm:rounded-2xl group-hover:rotate-6 group-hover:bg-brand-600 group-hover:text-white">
+      <div className="hover-lift group h-full rounded-2xl border border-slate-200 bg-white p-4 shadow-sm hover:border-brand-600/30 hover:shadow-2xl max-sm:flex max-sm:items-center max-sm:gap-4 sm:rounded-3xl sm:p-6">
+        <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-brand-50 text-brand-600 transition-all duration-500 sm:h-12 sm:w-12 sm:rounded-2xl group-hover:rotate-6 group-hover:bg-brand-600 group-hover:text-white">
           <Icon name={icon} className="h-5 w-5 sm:h-6 sm:w-6" />
         </span>
-        <p className="mt-3 text-xs font-semibold uppercase tracking-wider text-slate-500 sm:mt-4 sm:text-sm">{title}</p>
-        <div className="mt-1 break-words text-base font-bold sm:text-lg">{children}</div>
+        <div className="min-w-0">
+          <p className="text-xs font-semibold uppercase tracking-wider text-slate-500 sm:mt-4 sm:text-sm">{title}</p>
+          <div className="mt-0.5 break-words text-base font-bold sm:mt-1 sm:text-lg">{children}</div>
+        </div>
       </div>
     </div>
   );
@@ -22,7 +24,7 @@ export default function Contact({ settings: s }: { settings: Settings }) {
   let i = 0;
   return (
     <Section id="contact" title="Aloqa" eyebrow="Bog'laning" tone="tint" prev="dark" wave="curve" backdrop={8} subtitle={`${s.academyName} bilan bog'lanish uchun qulay usulni tanlang.`}>
-      <div className="grid gap-3.5 sm:grid-cols-2 sm:gap-5 lg:grid-cols-3">
+      <div className="grid gap-2.5 sm:grid-cols-2 sm:gap-5 lg:grid-cols-3">
         <Card i={i++} icon="phone" title="Telefon">
           {s.phones.map((p, k) => <a key={`${p}-${k}`} href={telHref(p)} className="block py-1 transition hover:text-brand-600 sm:py-0">{p}</a>)}
         </Card>
