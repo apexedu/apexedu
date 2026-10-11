@@ -44,14 +44,14 @@ export default function FloatingCta({ phone }: { phone?: string }) {
       </div>
 
       {/* Telefon: pastki doimiy panel */}
-      <div className={`fixed inset-x-0 bottom-0 z-30 border-t border-slate-200 bg-white/95 px-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-3 shadow-[0_-10px_30px_-10px_rgba(7,50,63,0.25)] backdrop-blur transition-all duration-500 md:hidden ${hide}`}>
+      <div className={`fixed inset-x-3 bottom-[max(0.75rem,env(safe-area-inset-bottom))] z-30 rounded-2xl border border-slate-200/80 bg-white/90 p-2 shadow-[0_14px_40px_-8px_rgba(7,50,63,0.5)] backdrop-blur-xl transition-all duration-500 md:hidden ${hide}`}>
         <div className={`mx-auto grid max-w-md gap-3 ${phone ? "grid-cols-2" : "grid-cols-1"}`}>
           {phone && (
-            <a href={telHref(phone)} className="relative flex items-center justify-center gap-2 rounded-xl bg-brand-600 py-3 text-sm font-bold text-white">
-              <Icon name="phone" className="ringing h-4 w-4" /> Qo'ng'iroq qilish
+            <a href={telHref(phone)} className="press relative flex min-h-12 items-center justify-center gap-2 rounded-xl bg-brand-600 px-2 py-3 text-[0.95rem] font-bold text-white">
+              <Icon name="phone" className="ringing h-[1.1rem] w-[1.1rem]" /> Qo'ng'iroq qilish
             </a>
           )}
-          <a href="#apply" className="btn-shine flex items-center justify-center gap-2 rounded-xl bg-saffron py-3 text-sm font-bold text-brand-900">
+          <a href="#apply" className="press btn-shine flex min-h-12 items-center justify-center gap-2 rounded-xl bg-saffron px-2 py-3 text-[0.95rem] font-bold text-brand-900">
             Ariza qoldirish
           </a>
         </div>
