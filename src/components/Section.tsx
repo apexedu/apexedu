@@ -21,19 +21,25 @@ const BG: Record<Tone, string> = {
   tint: "bg-mist text-ink",
   dark: "bg-[linear-gradient(180deg,#07323f_0%,#051a24_100%)] text-white",
 };
+// Telefonda: oq/kulrang bo'limlar sahifa foniga qo'shiladi, qorong'i bo'limlar esa yumaloq "banner-karta" bo'ladi
+const MOBILE: Record<Tone, string> = {
+  light: "max-sm:bg-transparent",
+  tint: "max-sm:bg-transparent",
+  dark: "max-sm:mx-3 max-sm:my-2 max-sm:overflow-hidden max-sm:rounded-3xl",
+};
 const FILL: Record<Tone, string> = { light: "#ffffff", tint: "#f3f6f8", dark: "#051a24" };
 
 export default function Section({ id, title, subtitle, eyebrow, tone = "light", prev, wave = "curve", backdrop, align = "left", children }: Props) {
   const dark = tone === "dark";
   const center = align === "center";
   return (
-    <section id={id} className={`${prev ? "sec-w" : "sec-n"} relative ${BG[tone]} ${prev ? "pt-24 sm:pt-36" : "pt-16 sm:pt-28"} pb-14 sm:pb-28`}>
-      {tone === "tint" && <div className="dots-pattern pointer-events-none absolute inset-0 opacity-60" aria-hidden="true" />}
+    <section id={id} className={`${prev ? "sec-w" : "sec-n"} relative ${BG[tone]} ${MOBILE[tone]} ${prev ? "sm:pt-36" : "sm:pt-28"} pt-8 pb-8 sm:pb-28`}>
+      {tone === "tint" && <div className="dots-pattern pointer-events-none absolute inset-0 opacity-60 max-sm:hidden" aria-hidden="true" />}
       {dark && <div className="dots-pattern-dark pointer-events-none absolute inset-0 opacity-50" aria-hidden="true" />}
-      {backdrop !== undefined && <EduBackdrop tone={dark ? "dark" : "light"} seed={backdrop} />}
+      {backdrop !== undefined && <div className="max-sm:hidden"><EduBackdrop tone={dark ? "dark" : "light"} seed={backdrop} /></div>}
 
       {prev && (
-        <svg className="pointer-events-none absolute inset-x-0 top-0 h-10 w-full sm:h-20" viewBox="0 0 1440 80" preserveAspectRatio="none" aria-hidden="true">
+        <svg className="pointer-events-none absolute inset-x-0 top-0 h-10 w-full max-sm:hidden sm:h-20" viewBox="0 0 1440 80" preserveAspectRatio="none" aria-hidden="true">
           {wave === "curve"
             ? <path d="M0 0H1440V30C1130 86 760 84 0 18Z" fill={FILL[prev]} />
             : <path d="M0 0H1440V76L0 14Z" fill={FILL[prev]} />}
@@ -41,16 +47,16 @@ export default function Section({ id, title, subtitle, eyebrow, tone = "light", 
       )}
 
       <div className="relative mx-auto max-w-6xl px-4 sm:px-6">
-        <div data-reveal className={`mb-8 sm:mb-14 max-w-2xl ${center ? "mx-auto text-center" : ""}`}>
+        <div data-reveal className={`mb-5 sm:mb-14 max-w-2xl ${center ? "mx-auto text-center" : ""}`}>
           {eyebrow && (
             <p className={`mb-3 inline-flex items-center gap-2 rounded-full px-3 py-1 text-[0.7rem] sm:text-xs font-semibold uppercase tracking-[0.14em] ${dark ? "bg-white/10 text-saffron" : "bg-brand-50 text-brand-600"}`}>
               <span className="h-1.5 w-1.5 rounded-full bg-current" />
               {eyebrow}
             </p>
           )}
-          <h2 className="text-[1.75rem] font-extrabold leading-[1.15] tracking-tight sm:text-5xl">{title}</h2>
-          <span className={`title-bar mt-3 block h-1.5 w-14 sm:mt-4 sm:w-16 rounded-full bg-gradient-to-r from-saffron to-sky ${center ? "mx-auto" : ""}`} />
-          {subtitle && <p className={`mt-4 text-[0.95rem] leading-relaxed sm:mt-5 sm:text-lg ${dark ? "text-white/75" : "text-slate-600"}`}>{subtitle}</p>}
+          <h2 className="text-[1.5rem] font-extrabold leading-[1.15] tracking-tight sm:text-5xl">{title}</h2>
+          <span className={`title-bar mt-2.5 block h-1 w-10 sm:mt-4 sm:h-1.5 sm:w-16 rounded-full bg-gradient-to-r from-saffron to-sky ${center ? "mx-auto" : ""}`} />
+          {subtitle && <p className={`mt-3 text-[0.92rem] leading-relaxed sm:mt-5 sm:text-lg ${dark ? "text-white/75" : "text-slate-600"}`}>{subtitle}</p>}
         </div>
         {children}
       </div>
