@@ -7,7 +7,7 @@ interface Props { name: string; phone?: string; prev?: "light" | "tint"; seed?: 
 // Sahifa o'rtasidagi "undovchi" blok: foydalanuvchi shu yerda qaror qabul qilib qo'ng'iroq qiladi yoki ariza qoldiradi
 export default function CtaBand({ name, phone, seed = 3 }: Props) {
   return (
-    <section id="call" className="relative overflow-hidden bg-[linear-gradient(180deg,#07323f_0%,#051a24_100%)] py-14 text-white sm:py-24">
+    <section id="call" className="relative overflow-hidden bg-[linear-gradient(180deg,#07323f_0%,#051a24_100%)] py-9 text-white max-sm:mx-3 max-sm:my-2 max-sm:rounded-3xl sm:py-24">
       <div className="pointer-events-none absolute inset-0" aria-hidden="true">
         <div className="aurora aurora-a -left-40 top-[-12rem] h-[30rem] w-[30rem]" />
         <div className="aurora aurora-b -right-40 bottom-[-14rem] h-[30rem] w-[30rem]" />
